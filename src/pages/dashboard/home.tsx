@@ -27,7 +27,7 @@ const Home = () => {
         <div className="absolute z-1 flex flex-col gap-2 top-1/4 left-6">
           <h2 className="text-4xl font-semibold text-secondary max-w-sm">Get Started with Auditbots</h2>
           <div className="flex max-w-lg p-4 ">
-            <Button size="xl" className="hover:cursor-pointer" onClick={() => navigate('clients/add-client')}><img src="/src/assets/plusIcon.svg"/>Run Audit Procedure</Button>
+            <Button size="xl" className="hover:cursor-pointer" onClick={() => navigate('clients/add-client')}><img src="/assets/plusIcon.svg"/>Run Audit Procedure</Button>
           </div>
         </div>
       </div>

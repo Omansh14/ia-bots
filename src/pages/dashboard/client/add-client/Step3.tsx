@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, X, Search, GripVertical, AlertCircle } from 'lucide-react';
 import type{ UploadedFile, Category, DragData } from '@/types/index.types';
+
+// Helper to remove extension from filename for display
+const stripExtension = (filename: string) => {
+  const idx = filename.lastIndexOf('.');
+  return idx > 0 ? filename.slice(0, idx) : filename;
+};
 
 
 // Draggable File Component
@@ -176,36 +182,35 @@ const CategoryDropZone = ({
 const OrganiseUploads = () => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('');
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    { id: '1', name: 'Client_Contracts_Q3' },
-    { id: '2', name: 'Financial_Report_2024' },
-    { id: '3', name: 'Inventory_Data_Current' },
-    { id: '4', name: 'Sales_Figures_December' },
-    { id: '5', name: 'Marketing_Campaign_Results' },
-    { id: '6', name: 'Customer_Feedback_2024' },
-    { id: '7', name: 'Product_Review_2024' },
-    { id: '8', name: 'Market_Analysis_2024' },
-  ]);
+  // uploadedFiles will be populated from sessionStorage.step2
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
+  // start categories with empty files (user will drag uploaded files into these)
   const [categories, setCategories] = useState<Category[]>([
-    {
-      id: 'vendor-master',
-      name: 'Vendor Master',
-      files: [
-        { id: 'c1', name: 'Marketing_Campaign_Results' },
-        { id: 'c2', name: 'Vendor_List_2024' },
-      ],
-    },
+    { id: 'vendor-master', name: 'Vendor Master', files: [] },
     { id: 'purchase-register', name: 'Purchase Register', files: [] },
     { id: 'customer-master', name: 'Customer Master', files: [] },
     { id: 'inventory-master', name: 'Inventory Master', files: [] },
-    {
-      id: 'invoice-register',
-      name: 'Invoice Register',
-      files: [{ id: 'c3', name: 'Invoice_Data_2024' }],
-    },
+    { id: 'invoice-register', name: 'Invoice Register', files: [] },
     { id: 'po-summary', name: 'PO Summary', files: [] },
   ]);
+
+  // Load uploaded filenames from sessionStorage (step2) and list them in Uploaded Files
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('step2');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const p2p = Array.isArray(parsed.p2p_files) ? parsed.p2p_files : [];
+      const h2r = Array.isArray(parsed.h2r_files) ? parsed.h2r_files : [];
+      const o2c = Array.isArray(parsed.o2c_files) ? parsed.o2c_files : [];
+  const combined = Array.from(new Set([...p2p, ...h2r, ...o2c]));
+  const uploaded: UploadedFile[] = combined.map((name) => ({ id: name, name: stripExtension(name) }));
+      setUploadedFiles(uploaded);
+    } catch (e) {
+      // ignore parse errors
+    }
+  }, []);
 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [isValidating, setIsValidating] = useState(false);

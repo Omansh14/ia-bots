@@ -127,7 +127,7 @@ const Step1 = () => {
           <HoverCard>
             <HoverCardTrigger asChild>
               <div
-                className="text-muted-foreground max-w-lg truncate hover:cursor-progress"
+                className="text-muted-foreground max-w-4xl truncate hover:cursor-progress"
                 aria-label={desc}
               >
                 {desc}

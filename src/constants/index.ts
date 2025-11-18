@@ -77,216 +77,217 @@ const Clients: Client[] = [
 
 const bots: Bot[] = [
   {
-    id: "1",
-    category: "P2P",
-    auditProcedure: "Prevent duplicate vendors",
-    description: "Match PAN, GST, bank account, vendor name"
+    "id": "1",
+    "category": "P2P",
+    "auditProcedure": "Validate Vendor KYC",
+    "description": "Validates vendor master data for missing or invalid KYC fields such as PAN, GST, or bank account details."
   },
   {
-    id: "2",
-    category: "P2P",
-    auditProcedure: "Validate vendor KYC",
-    description: "Check missing PAN, GST, bank"
+    "id": "2",
+    "category": "P2P",
+    "auditProcedure": "PO-GRN-Invoice Match",
+    "description": "Validate that invoices are matched against approved purchase orders and corresponding GRNs to ensure 3-way matching."
   },
   {
-    id: "3",
-    category: "P2P",
-    auditProcedure: "Ensure PO–GRN–Invoice match",
-    description: "3-way match"
+    "id": "3",
+    "category": "P2P",
+    "auditProcedure": "Post-Invoice POs",
+    "description": "Flags purchase orders created after the corresponding invoice date, indicating potential control bypass."
   },
   {
-    id: "4",
-    category: "P2P",
-    auditProcedure: "Detect post-invoice POs",
-    description: "PO date after invoice date"
+    "id": "4",
+    "category": "P2P",
+    "auditProcedure": "Split Orders",
+    "description": "Analyzes procurement transactions to detect multiple small POs created for the same vendor to bypass approval thresholds."
   },
   {
-    id: "5",
-    category: "P2P",
-    auditProcedure: "Identify split orders",
-    description: "Multiple small POs same vendor"
+    "id": "5",
+    "category": "P2P",
+    "auditProcedure": "Duplicate Vendors",
+    "description": "Detects and prevents creation of duplicate vendor records by matching key identifiers like PAN, GST, and bank account."
   },
   {
-    id: "6",
-    category: "P2P",
-    auditProcedure: "Unauthorized vendor bank change",
-    description: "Track master changes"
+    "id": "6",
+    "category": "P2P",
+    "auditProcedure": "Unauthorized Vendor Bank Change",
+    "description": "Monitors vendor master data updates to detect suspicious or unauthorized bank account changes."
   },
   {
-    id: "7",
-    category: "P2P",
-    auditProcedure: "Validate vendor GST",
-    description: "Cross-check GST number format & validity"
+    "id": "7",
+    "category": "P2P",
+    "auditProcedure": "Validate Vendor GST",
+    "description": "Validates vendor GST number format and correctness based on standard GSTIN validation rules."
   },
   {
-    id: "8",
-    category: "P2P",
-    auditProcedure: "PO approval bypass",
-    description: "PO without approval workflow ID"
+    "id": "8",
+    "category": "P2P",
+    "auditProcedure": "PO Approval Bypass",
+    "description": "Identifies purchase orders created without passing through the designated approval workflow."
   },
   {
-    id: "9",
-    category: "P2P",
-    auditProcedure: "Price variance analysis",
-    description: "Compare PO rate vs last 3 months"
+    "id": "9",
+    "category": "P2P",
+    "auditProcedure": "Price Variance Analysis",
+    "description": "Compares PO item prices with historical prices for the same item or vendor to detect unusual rate changes."
   },
   {
-    id: "10",
-    category: "P2P",
-    auditProcedure: "Excessive emergency purchases",
-    description: "Count POs marked 'urgent'"
+    "id": "10",
+    "category": "P2P",
+    "auditProcedure": "Excessive Emergency Purchases",
+    "description": "Counts purchase orders marked as 'urgent' or 'emergency' to identify potential misuse of emergency purchase controls."
   },
   {
-    id: "11",
-    category: "P2P",
-    auditProcedure: "Vendor concentration risk",
-    description: "Spend % per vendor"
+    "id": "11",
+    "category": "P2P",
+    "auditProcedure": "Vendor Concentration Risk",
+    "description": "Calculates spend concentration per vendor to highlight over-dependence on a few vendors."
   },
   {
-    id: "12",
-    category: "P2P",
-    auditProcedure: "GRN delay tracking",
-    description: "GRN date vs delivery date"
+    "id": "12",
+    "category": "P2P",
+    "auditProcedure": "GRN Delay Tracking",
+    "description": "Tracks delays between goods delivery date and GRN posting date to detect process inefficiencies."
   },
   {
-    id: "13",
-    category: "P2P",
-    auditProcedure: "Unmatched GRNs",
-    description: "GRNs without invoices after X days"
+    "id": "13",
+    "category": "P2P",
+    "auditProcedure": "Unmatched GRNs",
+    "description": "Identifies GRNs that remain unmatched with invoices beyond a specified number of days."
   },
   {
-    id: "14",
-    category: "P2P",
-    auditProcedure: "Over-receipt",
-    description: "GRN qty > PO qty"
+    "id": "14",
+    "category": "P2P",
+    "auditProcedure": "Over-receipt",
+    "description": "Flags GRNs where received quantity exceeds PO quantity, indicating possible over-receipt issues."
   },
   {
-    id: "15",
-    category: "P2P",
-    auditProcedure: "Payment term adherence",
-    description: "Invoice date vs payment date"
+    "id": "15",
+    "category": "P2P",
+    "auditProcedure": "Payment Term Adherence",
+    "description": "Analyzes vendor payment timelines against agreed payment terms."
   },
   {
-    id: "16",
-    category: "P2P",
-    auditProcedure: "Duplicate invoice detection",
-    description: "Same vendor/date/amount"
+    "id": "16",
+    "category": "P2P",
+    "auditProcedure": "Duplicate Invoice Detection",
+    "description": "Detects duplicate invoices by comparing vendor, invoice date, and invoice amount combinations."
   },
   {
-    id: "17",
-    category: "P2P",
-    auditProcedure: "Invoice to inactive vendor",
-    description: "Match vendor status"
+    "id": "17",
+    "category": "P2P",
+    "auditProcedure": "Invoice to Inactive Vendor",
+    "description": "Identifies invoices issued to vendors whose status is inactive or blocked."
   },
   {
-    id: "18",
-    category: "P2P",
-    auditProcedure: "Non-PO invoices",
-    description: "Invoices without PO reference"
+    "id": "18",
+    "category": "P2P",
+    "auditProcedure": "Non-PO Invoices",
+    "description": "Flags invoices that do not reference any purchase order."
   },
   {
-    id: "19",
-    category: "P2P",
-    auditProcedure: "Foreign currency mismatch",
-    description: "Invoice currency ? PO currency"
+    "id": "19",
+    "category": "P2P",
+    "auditProcedure": "Foreign Currency Mismatch",
+    "description": "Identifies invoices where the currency does not match the associated purchase order currency."
   },
   {
-    id: "20",
-    category: "P2P",
-    auditProcedure: "Round sum invoices",
-    description: "Flag invoices with whole 000s"
+    "id": "20",
+    "category": "P2P",
+    "auditProcedure": "Round Sum Invoices",
+    "description": "Flags invoices with unusually rounded values such as exact multiples of 1,000."
   },
   {
-    id: "21",
-    category: "O2C",
-    auditProcedure: "Credit limit breach",
-    description: "SO+AR > limit"
+    "id": "21",
+    "category": "O2C",
+    "auditProcedure": "Credit Limit Breach",
+    "description": "Identifies customers whose outstanding receivables and open sales orders exceed their credit limits."
   },
   {
-    id: "23",
-    category: "O2C",
-    auditProcedure: "Duplicate invoices",
-    description: "Same customer/date/amount"
+    "id": "22",
+    "category": "O2C",
+    "auditProcedure": "Duplicate Invoices",
+    "description": "Detects duplicate sales invoices using combinations like customer, date, and invoice amount."
   },
   {
-    id: "24",
-    category: "O2C",
-    auditProcedure: "Sales without SO",
-    description: "Invoice without SO ID"
+    "id": "23",
+    "category": "O2C",
+    "auditProcedure": "Sales Without SO",
+    "description": "Identifies sales invoices created without a corresponding sales order."
   },
   {
-    id: "25",
-    category: "O2C",
-    auditProcedure: "Negative sales",
-    description: "Credit notes > invoice value"
+    "id": "24",
+    "category": "O2C",
+    "auditProcedure": "Negative Sales",
+    "description": "Flags cases where credit notes exceed corresponding invoice values."
   },
   {
-    id: "29",
-    category: "O2C",
-    auditProcedure: "Multiple invoices per order",
-    description: "Count invoices per SO"
+    "id": "25",
+    "category": "O2C",
+    "auditProcedure": "Multiple Invoices Per Order",
+    "description": "Counts number of invoices raised against each sales order to detect anomalies."
   },
   {
-    id: "32",
-    category: "O2C",
-    auditProcedure: "Zero-priced invoices",
-    description: "Invoice value = 0"
+    "id": "26",
+    "category": "O2C",
+    "auditProcedure": "Zero-Priced Invoices",
+    "description": "Identifies invoices with zero total value."
   },
   {
-    id: "33",
-    category: "O2C",
-    auditProcedure: "Missing customer master data",
-    description: "Null GST, PAN, credit terms"
+    "id": "27",
+    "category": "O2C",
+    "auditProcedure": "Missing Customer Master Data",
+    "description": "Flags customer master records missing key fields like GST, PAN, or credit terms."
   },
   {
-    id: "36",
-    category: "O2C",
-    auditProcedure: "Overdue delivery",
-    description: "SO date vs delivery date"
+    "id": "28",
+    "category": "O2C",
+    "auditProcedure": "Overdue Delivery",
+    "description": "Compares sales order date with delivery date to flag delayed deliveries."
   },
   {
-    id: "37",
-    category: "O2C",
-    auditProcedure: "Dispatch without invoice",
-    description: "Delivery ID without invoice"
+    "id": "29",
+    "category": "O2C",
+    "auditProcedure": "Dispatch Without Invoice",
+    "description": "Identifies dispatch records where goods have been shipped but no invoice has been generated."
   },
   {
-    id: "39",
-    category: "O2C",
-    auditProcedure: "Excessive small-value sales",
-    description: "Sales <?X repeated"
+    "id": "30",
+    "category": "O2C",
+    "auditProcedure": "Excessive Small-Value Sales",
+    "description": "Identifies repeated small-value transactions below a threshold."
   },
   {
-    id: "41",
-    category: "H2R",
-    auditProcedure: "Ghost employee detection",
-    description: "Match payroll to attendance"
+    "id": "31",
+    "category": "H2R",
+    "auditProcedure": "Ghost Employee Detection",
+    "description": "Detects employees receiving payroll but having no attendance records."
   },
   {
-    id: "44",
-    category: "H2R",
-    auditProcedure: "Duplicate employees",
-    description: "Match PAN, bank account"
+    "id": "32",
+    "category": "H2R",
+    "auditProcedure": "Duplicate Employees",
+    "description": "Matches PAN, bank account, or other identifiers to detect duplicate employee records."
   },
   {
-    id: "47",
-    category: "H2R",
-    auditProcedure: "Inactive employees in payroll",
-    description: "Exit date < current month"
+    "id": "33",
+    "category": "H2R",
+    "auditProcedure": "Inactive Employees in Payroll",
+    "description": "Identifies employees still appearing in payroll after their recorded exit date."
   },
   {
-    id: "49",
-    category: "H2R",
-    auditProcedure: "Statutory compliance – PF",
-    description: "PF payment date vs due date"
+    "id": "34",
+    "category": "H2R",
+    "auditProcedure": "Statutory Compliance – PF",
+    "description": "Checks PF deposit date against statutory due dates."
   },
   {
-    id: "50",
-    category: "H2R",
-    auditProcedure: "Statutory compliance – ESI",
-    description: "ESI payment date vs due date"
+    "id": "35",
+    "category": "H2R",
+    "auditProcedure": "Statutory Compliance – ESI",
+    "description": "Checks ESI deposit date against statutory due dates."
   }
 ];
+
 
 const audit_Procedures: AuditProcedure[] = [
   {

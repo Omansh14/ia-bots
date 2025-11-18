@@ -185,15 +185,39 @@ const OrganiseUploads = () => {
   // uploadedFiles will be populated from sessionStorage.step2
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
-  // start categories with empty files (user will drag uploaded files into these)
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 'vendor-master', name: 'Vendor Master', files: [] },
-    { id: 'purchase-register', name: 'Purchase Register', files: [] },
-    { id: 'customer-master', name: 'Customer Master', files: [] },
-    { id: 'inventory-master', name: 'Inventory Master', files: [] },
-    { id: 'invoice-register', name: 'Invoice Register', files: [] },
-    { id: 'po-summary', name: 'PO Summary', files: [] },
-  ]);
+  // categories will be derived from selected bots' `dataUsed` (sessionStorage.step1)
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  // helper to create a simple id from category name
+  const slugify = (s: string) =>
+    s
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+  // Load categories from sessionStorage.step1 -> selected_bots[*].dataUsed
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('step1');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const selected = Array.isArray(parsed.selected_bots) ? parsed.selected_bots : [];
+      const set = new Set<string>();
+      selected.forEach((b: any) => {
+        if (Array.isArray(b.dataUsed)) {
+          b.dataUsed.forEach((d: string) => {
+            if (d && typeof d === 'string') set.add(d);
+          });
+        }
+      });
+
+      const cats: Category[] = Array.from(set).map((name) => ({ id: slugify(name), name, files: [] }));
+      setCategories(cats);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
 
   // Load uploaded filenames from sessionStorage (step2) and list them in Uploaded Files
   useEffect(() => {

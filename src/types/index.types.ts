@@ -21,6 +21,7 @@ export type Bot = {
   category: string;
   auditProcedure: string;
   description: string;
+  dataUsed: string[];
 };
 
 export type UploadedFile = {

@@ -159,7 +159,6 @@ const UploadData = () => {
               <TabsTrigger value="H2R">H2R</TabsTrigger>
               <TabsTrigger value="O2C">O2C</TabsTrigger>
               <TabsTrigger value="Master">Master</TabsTrigger>
-              <TabsTrigger value="Other">Other</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -201,7 +200,7 @@ const UploadData = () => {
           {/* Document Evidence Section */}
           <div className="bg-card rounded-lg border p-6">
             <h3 className="text-lg font-semibold text-foreground mb-1">
-              Document Evidence <span className="text-destructive">*</span>
+              Document Evidence
             </h3>
 
             <div className="grid grid-cols-2 gap-6 mt-6">

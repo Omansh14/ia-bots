@@ -77,137 +77,215 @@ const Clients: Client[] = [
 
 const bots: Bot[] = [
   {
-    id: "p2p",
+    id: "1",
     category: "P2P",
     auditProcedure: "Prevent duplicate vendors",
-    description: "Detects and prevents creation of duplicate vendor records in the system.",
-    documentForEvidence: "PAN Certificate",
-    company: "Capital India Private Limited",
-    location: "Mumbai",
-    period: "Quarterly",
-    fYear: "2024-25",
-    industry: "Manufacturing",
+    description: "Match PAN, GST, bank account, vendor name"
   },
   {
-    id: "h2r",
-    category: "H2R",
-    auditProcedure: "Ghost employee detection",
-    description: "Compares payroll records with attendance data to detect non-existent employees drawing salaries.",
-    documentForEvidence: "Employee Master Report",
-    company: "Tata Motors",
-    location: "Pune",
-    period: "Q1",
-    fYear: "2024-25",
-    industry: "Automobile",
-  },
-  {
-    id: "p2p-match",
+    id: "2",
     category: "P2P",
-    auditProcedure: "Ensure PO-GRN-Invoice match",
-    description: "Performs automated 3-way matching between Purchase Orders, GRNs, and Invoices to ensure accuracy before payment.",
-    documentForEvidence: "PO, GRN & Invoice Copies",
-    company: "Reliance Industries",
-    location: "Mumbai",
-    period: "Q2",
-    fYear: "2024-25",
-    industry: "Energy",
+    auditProcedure: "Validate vendor KYC",
+    description: "Check missing PAN, GST, bank"
   },
   {
-    id: "h2r-salary",
-    category: "H2R",
-    auditProcedure: "Identify salary outliers",
-    description: "Monitors employee salary trends and flags anomalies or inconsistent salary increments for review.",
-    documentForEvidence: "Salary Benchmarking Sheet",
-    company: "Wipro",
-    location: "Bengaluru",
-    period: "Monthly",
-    fYear: "2024-25",
-    industry: "IT Services",
-  },
-  {
-    id: "otr-travel",
-    category: "OTR",
-    auditProcedure: "Travel expense fraud detection",
-    description: "Validates travel claims against booking data and location tracking to spot fraudulent claims.",
-    documentForEvidence: "Travel Expense Report",
-    company: "Hindustan Unilever",
-    location: "Kolkata",
-    period: "Half-Yearly",
-    fYear: "2023-24",
-    industry: "FMCG",
-  },
-  {
-    id: "f2f-collection",
-    category: "F2F",
-    auditProcedure: "Monitor receivable aging",
-    description: "Analyzes customer outstanding balances and flags overdue receivables.",
-    documentForEvidence: "AR Aging Report",
-    company: "Tata Motors",
-    location: "Chennai",
-    period: "Q3",
-    fYear: "2023-24",
-    industry: "Automobile",
-  },
-  {
-    id: "it-access",
-    category: "ITGC",
-    auditProcedure: "Periodic user access review",
-    description: "Automates user access review to ensure only authorized individuals retain system access.",
-    documentForEvidence: "Access Logs",
-    company: "Capital India Private Limited",
-    location: "Noida",
-    period: "Quarterly",
-    fYear: "2024-25",
-    industry: "Cybersecurity",
-  },
-  {
-    id: "p2p-rate",
+    id: "3",
     category: "P2P",
-    auditProcedure: "Rate contract deviation check",
-    description: "Checks purchase orders against approved vendor rate contracts to identify price deviations.",
-    documentForEvidence: "Rate Contract Agreement",
-    company: "Mahindra & Mahindra",
-    location: "Hyderabad",
-    period: "Q4",
-    fYear: "2024-25",
-    industry: "Manufacturing",
+    auditProcedure: "Ensure PO–GRN–Invoice match",
+    description: "3-way match"
   },
   {
-    id: "h2r-overtime",
-    category: "H2R",
-    auditProcedure: "Overtime abuse monitoring",
-    description: "Analyzes overtime patterns to detect excessive or unauthorized overtime payouts.",
-    documentForEvidence: "Timesheet & Payroll Report",
-    company: "Infosys",
-    location: "Bengaluru",
-    period: "Monthly",
-    fYear: "2024-25",
-    industry: "IT Services",
-  },
-  {
-    id: "otr-fleet",
-    category: "OTR",
-    auditProcedure: "Fuel consumption analytics",
-    description: "Monitors vehicle fuel consumption and flags anomalies against standard mileage benchmarks.",
-    documentForEvidence: "Fuel Log Sheets",
-    company: "LogiTrans Ltd",
-    location: "Surat",
-    period: "Quarterly",
-    fYear: "2024-25",
-    industry: "Logistics",
-  },
-  {
-    id: "extra-1",
+    id: "4",
     category: "P2P",
     auditProcedure: "Detect post-invoice POs",
-    description: "Flags purchase orders created after the corresponding invoice date.",
-    documentForEvidence: "Invoice & PO copies",
-    company: "Capitall India Pvt. Ltd.",
-    location: "Ahmedabad",
-    period: "Q1",
-    fYear: "2024-25",
-    industry: "Retail",
+    description: "PO date after invoice date"
   },
+  {
+    id: "5",
+    category: "P2P",
+    auditProcedure: "Identify split orders",
+    description: "Multiple small POs same vendor"
+  },
+  {
+    id: "6",
+    category: "P2P",
+    auditProcedure: "Unauthorized vendor bank change",
+    description: "Track master changes"
+  },
+  {
+    id: "7",
+    category: "P2P",
+    auditProcedure: "Validate vendor GST",
+    description: "Cross-check GST number format & validity"
+  },
+  {
+    id: "8",
+    category: "P2P",
+    auditProcedure: "PO approval bypass",
+    description: "PO without approval workflow ID"
+  },
+  {
+    id: "9",
+    category: "P2P",
+    auditProcedure: "Price variance analysis",
+    description: "Compare PO rate vs last 3 months"
+  },
+  {
+    id: "10",
+    category: "P2P",
+    auditProcedure: "Excessive emergency purchases",
+    description: "Count POs marked 'urgent'"
+  },
+  {
+    id: "11",
+    category: "P2P",
+    auditProcedure: "Vendor concentration risk",
+    description: "Spend % per vendor"
+  },
+  {
+    id: "12",
+    category: "P2P",
+    auditProcedure: "GRN delay tracking",
+    description: "GRN date vs delivery date"
+  },
+  {
+    id: "13",
+    category: "P2P",
+    auditProcedure: "Unmatched GRNs",
+    description: "GRNs without invoices after X days"
+  },
+  {
+    id: "14",
+    category: "P2P",
+    auditProcedure: "Over-receipt",
+    description: "GRN qty > PO qty"
+  },
+  {
+    id: "15",
+    category: "P2P",
+    auditProcedure: "Payment term adherence",
+    description: "Invoice date vs payment date"
+  },
+  {
+    id: "16",
+    category: "P2P",
+    auditProcedure: "Duplicate invoice detection",
+    description: "Same vendor/date/amount"
+  },
+  {
+    id: "17",
+    category: "P2P",
+    auditProcedure: "Invoice to inactive vendor",
+    description: "Match vendor status"
+  },
+  {
+    id: "18",
+    category: "P2P",
+    auditProcedure: "Non-PO invoices",
+    description: "Invoices without PO reference"
+  },
+  {
+    id: "19",
+    category: "P2P",
+    auditProcedure: "Foreign currency mismatch",
+    description: "Invoice currency ? PO currency"
+  },
+  {
+    id: "20",
+    category: "P2P",
+    auditProcedure: "Round sum invoices",
+    description: "Flag invoices with whole 000s"
+  },
+  {
+    id: "21",
+    category: "O2C",
+    auditProcedure: "Credit limit breach",
+    description: "SO+AR > limit"
+  },
+  {
+    id: "23",
+    category: "O2C",
+    auditProcedure: "Duplicate invoices",
+    description: "Same customer/date/amount"
+  },
+  {
+    id: "24",
+    category: "O2C",
+    auditProcedure: "Sales without SO",
+    description: "Invoice without SO ID"
+  },
+  {
+    id: "25",
+    category: "O2C",
+    auditProcedure: "Negative sales",
+    description: "Credit notes > invoice value"
+  },
+  {
+    id: "29",
+    category: "O2C",
+    auditProcedure: "Multiple invoices per order",
+    description: "Count invoices per SO"
+  },
+  {
+    id: "32",
+    category: "O2C",
+    auditProcedure: "Zero-priced invoices",
+    description: "Invoice value = 0"
+  },
+  {
+    id: "33",
+    category: "O2C",
+    auditProcedure: "Missing customer master data",
+    description: "Null GST, PAN, credit terms"
+  },
+  {
+    id: "36",
+    category: "O2C",
+    auditProcedure: "Overdue delivery",
+    description: "SO date vs delivery date"
+  },
+  {
+    id: "37",
+    category: "O2C",
+    auditProcedure: "Dispatch without invoice",
+    description: "Delivery ID without invoice"
+  },
+  {
+    id: "39",
+    category: "O2C",
+    auditProcedure: "Excessive small-value sales",
+    description: "Sales <?X repeated"
+  },
+  {
+    id: "41",
+    category: "H2R",
+    auditProcedure: "Ghost employee detection",
+    description: "Match payroll to attendance"
+  },
+  {
+    id: "44",
+    category: "H2R",
+    auditProcedure: "Duplicate employees",
+    description: "Match PAN, bank account"
+  },
+  {
+    id: "47",
+    category: "H2R",
+    auditProcedure: "Inactive employees in payroll",
+    description: "Exit date < current month"
+  },
+  {
+    id: "49",
+    category: "H2R",
+    auditProcedure: "Statutory compliance – PF",
+    description: "PF payment date vs due date"
+  },
+  {
+    id: "50",
+    category: "H2R",
+    auditProcedure: "Statutory compliance – ESI",
+    description: "ESI payment date vs due date"
+  }
 ];
 
 const audit_Procedures: AuditProcedure[] = [

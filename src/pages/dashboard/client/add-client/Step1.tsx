@@ -40,7 +40,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { bots } from '@/constants';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -56,19 +56,7 @@ import {
 } from '@tanstack/react-table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-// Define the bot type based on your data structure
-type Bot = {
-  id: string;
-  category: string;
-  auditProcedure: string;
-  description: string;
-  documentForEvidence: string;
-  company?: string;
-  location?: string;
-  period?: string;
-  fYear?: string;
-  industry?: string;
-};
+// Note: bots come from shared constants/types and are used as-is. Local detailed Bot type removed to avoid conflicts.
 
 const Step1 = () => {
   const navigate = useNavigate();
@@ -84,7 +72,7 @@ const Step1 = () => {
     return classes.filter(Boolean).join(' ');
   }
 
-  const columns: ColumnDef<Bot>[] = [
+  const columns: ColumnDef<any>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -158,13 +146,13 @@ const Step1 = () => {
         );
       },
     },
-    {
-      accessorKey: 'documentForEvidence',
-      header: 'Document for Evidence',
-      cell: ({ row }) => (
-        <div className="text-muted-foreground">{row.getValue('documentForEvidence')}</div>
-      ),
-    },
+    // {
+    //   accessorKey: 'documentForEvidence',
+    //   header: 'Document for Evidence',
+    //   cell: ({ row }) => (
+    //     <div className="text-muted-foreground">{row.getValue('documentForEvidence')}</div>
+    //   ),
+    // },
   ];
 
   const table = useReactTable({
@@ -216,12 +204,31 @@ const Step1 = () => {
 
   // derive unique companies and locations from bots
   // const companies = [...new Set(bots.map((b) => b.company))];
-  const locations = [...new Set(bots.map((b) => b.location))];
+  // Add some top Indian cities as dummy locations to ensure the select has common values
+  const indianCities = ['Mumbai','Delhi','Bangalore','Chennai','Kolkata','Hyderabad','Pune','Ahmedabad','Surat','Jaipur'];
 
-  const initialCompanies = ['Acme Corp', 'TechStart Inc', 'Global Industries', 'Innovation Labs'];
+  const locations = Array.from(
+    new Set([...(bots as any).map((b: any) => b.location).filter(Boolean), ...indianCities]),
+  );
+
+  // Add common period options (merge with any periods present on bots)
+  const periodOptions = ['Annually', 'Semi-Annually', 'Q1', 'Q2', 'Q3', 'Q4'];
+
+  // Financial year and industry options
+  const fYearOptions = ['2024-25', '2023-24', '2022-23'];
+  const industryOptions = [
+    'Financial Services',
+    'Healthcare',
+    'Manufacturing',
+    'Retail',
+    'Technology',
+    'Energy',
+    'Education',
+  ];
+
+  const initialCompanies = ['Acme Corp', 'TechStart Inc', 'Global Industries', 'Innovation Labs', 'Tata Motors', 'Tech Innovators', 'Global Foods', 'EcoBuild', 'Finserve Solutions', 'Greenwave Energy', 'Apex Pharmaceuticals'];
 
   const [companyList, setCompanyList] = useState<string[]>(initialCompanies);
-  // Local filter states (these are independent of the table columns)
   const [companyFilter, setCompanyFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
@@ -229,6 +236,69 @@ const Step1 = () => {
   const [industryFilter, setIndustryFilter] = useState('');
 
   const selectedIndustry = industryFilter || 'All';
+  const [categoryFilterValue, setCategoryFilterValue] = useState('all');
+
+  // Load saved state from sessionStorage (if any) on mount
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('step1');
+      if (!raw) return;
+      const data = JSON.parse(raw || '{}');
+      if (data.selected_company) setCompanyFilter(data.selected_company);
+      if (data.selected_location) setLocationFilter(data.selected_location);
+      if (data.selected_period) setPeriodFilter(data.selected_period);
+      if (data.selected_financial_year) setFYearFilter(data.selected_financial_year);
+      if (data.selected_industry) setIndustryFilter(data.selected_industry);
+      if (Array.isArray(data.company_list) && data.company_list.length > 0) {
+        setCompanyList((prev) => Array.from(new Set([...prev, ...data.company_list])));
+      }
+
+      // Restore selected bots by matching stored bot ids to rows (stored bots are full objects)
+      if (Array.isArray(data.selected_bots) && data.selected_bots.length > 0) {
+        const selection: RowSelectionState = {};
+        const storedIds = data.selected_bots.map((b: any) => b?.id).filter(Boolean);
+        table.getRowModel().rows.forEach((row) => {
+          const rowId = (row.original as any)?.id ?? row.id;
+          if (storedIds.includes(rowId)) {
+            selection[row.id] = true;
+          }
+        });
+        setRowSelection(selection);
+        try {
+          table.setRowSelection?.(selection);
+        } catch (e) {
+          // ignore
+        }
+      }
+    } catch (e) {
+      // ignore JSON parse errors
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist step1 data to localStorage whenever relevant state changes
+  useEffect(() => {
+    try {
+      const selectedBotsObjects = table.getRowModel().rows
+        .filter((r) => Boolean(rowSelection[r.id]))
+        .map((r) => (r.original as any));
+
+      const payload = {
+        selected_company: companyFilter || null,
+        selected_location: locationFilter || null,
+        selected_period: periodFilter || null,
+        selected_financial_year: fYearFilter || null,
+        selected_industry: industryFilter || null,
+        // store full bot objects for selected bots
+        selected_bots: selectedBotsObjects,
+        company_list: companyList,
+      };
+
+      sessionStorage.setItem('step1', JSON.stringify(payload));
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [companyFilter, locationFilter, periodFilter, fYearFilter, industryFilter, rowSelection, companyList, table]);
 
   const handleAddCompany = () => {
     const trimmedValue = companySearchValue.trim();
@@ -383,7 +453,7 @@ const Step1 = () => {
                 <SelectValue placeholder="Period" />
               </SelectTrigger>
               <SelectContent className="w-full">
-                {[...new Set(bots.map((bot) => bot.period))].map((period) => (
+                {[...new Set([...(bots as any).map((bot: any) => bot.period).filter(Boolean), ...periodOptions])].map((period: any) => (
                   <SelectItem key={period} value={period}>
                     {period}
                   </SelectItem>
@@ -400,7 +470,7 @@ const Step1 = () => {
                 <SelectValue placeholder="All" />
               </SelectTrigger>
               <SelectContent>
-                {[...new Set(bots.map((bot) => bot.fYear))].map((year) => (
+                {[...new Set([...(bots as any).map((bot: any) => bot.fYear).filter(Boolean), ...fYearOptions])].map((year: any) => (
                   <SelectItem key={year} value={year}>
                     {year}
                   </SelectItem>
@@ -417,7 +487,7 @@ const Step1 = () => {
                 <SelectValue placeholder="Industry" />
               </SelectTrigger>
               <SelectContent className="w-full">
-                {[...new Set(bots.map((bot) => bot.industry))].map((industry) => (
+                {[...new Set([...(bots as any).map((bot: any) => bot.industry).filter(Boolean), ...industryOptions])].map((industry: any) => (
                   <SelectItem key={industry} value={industry}>
                     {industry}
                   </SelectItem>
@@ -447,36 +517,39 @@ const Step1 = () => {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            <div className="hidden sm:block">
+              <Select
+                value={categoryFilterValue}
+                onValueChange={(value) => {
+                  setCategoryFilterValue(value);
+                  try {
+                    const col = table.getColumn('category');
+                    if (col) {
+                      // treat 'all' as clear
+                      col.setFilterValue(value === 'all' ? undefined : value);
+                    }
+                  } catch (e) {
+                    // ignore
+                  }
+                }}
+              >
+                <SelectTrigger className="h-8 w-40 bg-background">
+                  <LayoutGrid className="mr-1 h-4 w-4 text-gray-700" />
+                  <SelectValue placeholder="Category" />
+                  
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="P2P">P2P</SelectItem>
+                  <SelectItem value="H2R">H2R</SelectItem>
+                  <SelectItem value="O2C">O2C</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <Button variant="outline" size="sm" onClick={handleReset}>
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <LayoutGrid className="mr-2 h-4 w-4" />
-                  Category
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
@@ -496,7 +569,7 @@ const Step1 = () => {
         {/* Data Table */}
         <div className="rounded-md border">
           <Table>
-            <TableHeader className="bg-gray-50">
+            <TableHeader className="bg-gray-100">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {

@@ -21,12 +21,6 @@ export type Bot = {
   category: string;
   auditProcedure: string;
   description: string;
-  documentForEvidence: string;
-  company: string;
-  location: string;
-  period: string;
-  fYear: string;
-  industry: string;
 };
 
 export type UploadedFile = {

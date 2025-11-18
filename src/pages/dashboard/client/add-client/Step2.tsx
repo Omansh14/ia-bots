@@ -97,7 +97,7 @@ const UploadData = () => {
               </p>
             </div>
           </div>
-          <Button onClick={handleSubmit}>Save & Next</Button>
+          <Button size="lg" onClick={handleSubmit}>Save & Next</Button>
         </div>
       </header>
 

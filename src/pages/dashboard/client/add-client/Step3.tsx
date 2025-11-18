@@ -311,8 +311,8 @@ const OrganiseUploads = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className='hover:cursor-pointer' onClick={() => navigate(-1)}>Previous</Button>
-            <Button onClick={onSubmit} className='hover:cursor-pointer'>Proceed</Button>
+            <Button variant="outline" size="lg"className='hover:cursor-pointer' onClick={() => navigate(-1)}>Previous</Button>
+            <Button size="lg" onClick={onSubmit} className='hover:cursor-pointer'>Proceed</Button>
           </div>
         </div>
       </header>

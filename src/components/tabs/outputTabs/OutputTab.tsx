@@ -172,16 +172,16 @@ export const OutputTab = () => {
           </Button>
         </div>
         <div className="p-4 flex gap-4 w-full">
-          <Card className="w-1/2">
+          <Card className="w-1/2 bg-gray-100 border border-gray-200">
             <div className="flex items-center justify-center gap-4">
               <span className="text-2xl font-bold text-foreground">12/24</span>
-              <span className="text-sm text-muted-foreground">Total Exceptions Identified</span>
+              <span className="text-sm text-muted-foreground font-normal">Total Exceptions Identified</span>
             </div>
           </Card>
-          <Card className="w-1/2">
+          <Card className="w-1/2 bg-gray-100 border border-gray-200">
             <div className="flex items-center justify-center gap-4">
               <div className="text-2xl font-bold text-foreground">12%</div>
-              <div className="text-sm text-muted-foreground">Exception Rate (%)</div>
+              <div className="text-sm text-muted-foreground font-normal">Exception Rate (%)</div>
             </div>
           </Card>
         </div>

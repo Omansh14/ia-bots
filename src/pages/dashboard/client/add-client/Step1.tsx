@@ -229,7 +229,7 @@ const Step1 = () => {
             </p>
           </div>
         </div>
-        <Button className="hover:cursor-pointer" onClick={() => navigate('upload-data')}>
+        <Button size="lg" className="hover:cursor-pointer" onClick={() => navigate('upload-data')}>
           Save & Next
         </Button>
       </div>

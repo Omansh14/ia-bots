@@ -1,20 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  ArrowLeft,
-  Upload,
-  CloudUpload,
-  Database,
-  FileUp,
-  Link,
-  CircleAlert,
-} from 'lucide-react';
+import { ArrowLeft, Upload, CloudUpload, Database, Link, CircleAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Label } from '@/components/ui/label';
-import { useDropzone } from 'react-dropzone';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import UploadFiles from './UploadFiles';
 
 type DataSource = {
   id: string;
@@ -38,16 +29,7 @@ const UploadData = () => {
     }
   };
 
-  const { getInputProps, getRootProps, acceptedFiles, open } = useDropzone({
-    accept: {
-      'text/csv': ['.csv'],
-      'application/json': ['.json'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-    },
-    multiple: true,
-    noKeyboard: true,
-    noClick:true
-  });
+  // Dropzone logic moved into UploadFiles component
 
   const dataSources: DataSource[] = [
     {
@@ -97,7 +79,9 @@ const UploadData = () => {
               </p>
             </div>
           </div>
-          <Button size="lg" onClick={handleSubmit}>Save & Next</Button>
+          <Button size="lg" onClick={handleSubmit}>
+            Save & Next
+          </Button>
         </div>
       </header>
 
@@ -138,7 +122,7 @@ const UploadData = () => {
             ))}
             <div className="w-full flex items-start gap-3 p-3 rounded-lg text-left bg-amber-100">
               <div className="mt-0.5">
-                <CircleAlert className='w-4 h-4 text-gray-700' />
+                <CircleAlert className="w-4 h-4 text-gray-700" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-gray-700">Quick Start</div>
@@ -162,113 +146,81 @@ const UploadData = () => {
             </TabsList>
           </Tabs>
 
-          {/* Upload Files Section */}
-          <div className="bg-card rounded-lg border p-6 mb-6">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Upload Files</h3>
-              <p className="text-sm text-muted-foreground">
-                Drag and drop your files or browse to upload
-              </p>
-            </div>
+          {/* Upload Files Section (moved into UploadFiles component) */}
+          <UploadFiles tab={activeTab} />
 
-            {/* Drag and Drop Area */}
-            <div
-              className="relative border-2 border-dashed rounded-lg p-6 h-64 text-center bg-muted/30 hover:bg-muted/50 transition-colors"
-              {...getRootProps()}
-            >
-              <div className="flex flex-col items-center gap-4">
-                <Input type="file" {...getInputProps()} />
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <FileUp className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-foreground mb-1">Drag and Drop</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Upload CSV, Excel, or JSON files to get started
-                  </p>
-                  <Button className='hover:cursor-pointer' onClick={(e) => { e.stopPropagation(); open()}}>Browse Files</Button>
-                </div>
-              </div>
-              {acceptedFiles && acceptedFiles.length> 0 &&(
-                <div className="absolute bottom-2 flex gap-3">
-                  {acceptedFiles.map(file => <Badge className='bg-blue-100 text-blue-600 text-xs'>{file.name}</Badge>)}
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Document Evidence Section (only for P2P) */}
+          {activeTab === 'P2P' && (
+            <div className="bg-card rounded-lg border p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-1">Document Evidence</h3>
 
-          {/* Document Evidence Section */}
-          <div className="bg-card rounded-lg border p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-1">
-              Document Evidence
-            </h3>
-
-            <div className="grid grid-cols-2 gap-6 mt-6">
-              {/* Left Column */}
-              <div className="space-y-6">
-                <div className="relative">
-                  <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
-                    PAN certificate
-                  </Label>
-                  <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
-                    Prevent duplicate vendors
-                  </span>
-                  <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
-                    <span className="text-sm text-muted-foreground">
-                      {selectedFile ? selectedFile.name : 'Upload File'}
+              <div className="grid grid-cols-2 gap-6 mt-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  <div className="relative">
+                    <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
+                      PAN certificate
+                    </Label>
+                    <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
+                      Prevent duplicate vendors
                     </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => document.getElementById('pan-certificate')?.click()}
-                      type="button"
-                    >
-                      <Upload className="w-4 h-4" />
-                    </Button>
+                    <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
+                      <span className="text-sm text-muted-foreground">
+                        {selectedFile ? selectedFile.name : 'Upload File'}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => document.getElementById('pan-certificate')?.click()}
+                        type="button"
+                      >
+                        <Upload className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <Input
+                      id="pan-certificate"
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleFileChange}
+                    />
                   </div>
-                  <Input
-                    id="pan-certificate"
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileChange}
-                  />
                 </div>
-              </div>
 
-              {/* Right Column */}
-              <div className="space-y-6">
-                <div className="relative">
-                  <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
-                    Ghost employee detection
-                  </Label>
-                  <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
-                    GST Certificate
-                  </span>
-                  <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
-                    <span className="text-sm text-muted-foreground">
-                      {selectedFile ? selectedFile.name : 'Upload File'}
+                {/* Right Column */}
+                <div className="space-y-6">
+                  <div className="relative">
+                    <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
+                      Ghost employee detection
+                    </Label>
+                    <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
+                      GST Certificate
                     </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => document.getElementById('pan-certificate')?.click()}
-                      type="button"
-                    >
-                      <Upload className="w-4 h-4" />
-                    </Button>
+                    <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
+                      <span className="text-sm text-muted-foreground">
+                        {selectedFile ? selectedFile.name : 'Upload File'}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => document.getElementById('pan-certificate')?.click()}
+                        type="button"
+                      >
+                        <Upload className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <Input
+                      id="pan-certificate"
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleFileChange}
+                    />
                   </div>
-                  <Input
-                    id="pan-certificate"
-                    type="file"
-                    className="hidden"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={handleFileChange}
-                  />
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>

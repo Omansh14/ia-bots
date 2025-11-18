@@ -33,6 +33,10 @@ import {
   ChevronDown,
   LayoutGrid,
   Sparkle,
+  ChevronsUpDown,
+  Check,
+  Plus,
+  X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { bots } from '@/constants';
@@ -50,6 +54,7 @@ import {
   type VisibilityState,
   type RowSelectionState,
 } from '@tanstack/react-table';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 // Define the bot type based on your data structure
 type Bot = {
@@ -72,10 +77,14 @@ const Step1 = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
+  const [companyOpen, setCompanyOpen] = useState(false);
+  const [companySearchValue, setCompanySearchValue] = useState('');
 
-  // Define columns with TanStack Table
+  function cn(...classes: (string | boolean | undefined)[]) {
+    return classes.filter(Boolean).join(' ');
+  }
+
   const columns: ColumnDef<Bot>[] = [
-    // (Removed company/location/period/fYear/industry columns — filters now independent UI)
     {
       id: 'select',
       header: ({ table }) => (
@@ -135,11 +144,14 @@ const Step1 = () => {
         return (
           <HoverCard>
             <HoverCardTrigger asChild>
-              <div className="text-muted-foreground max-w-lg truncate hover:cursor-progress" aria-label={desc}>
+              <div
+                className="text-muted-foreground max-w-lg truncate hover:cursor-progress"
+                aria-label={desc}
+              >
                 {desc}
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className='min-w-lg bg-blue-50'>
+            <HoverCardContent className="min-w-lg bg-blue-50">
               <div className="whitespace-pre-wrap text-sm text-foreground">{desc}</div>
             </HoverCardContent>
           </HoverCard>
@@ -203,9 +215,12 @@ const Step1 = () => {
   const selectedCount = Object.keys(rowSelection).length;
 
   // derive unique companies and locations from bots
-  const companies = [...new Set(bots.map((b) => b.company))];
+  // const companies = [...new Set(bots.map((b) => b.company))];
   const locations = [...new Set(bots.map((b) => b.location))];
 
+  const initialCompanies = ['Acme Corp', 'TechStart Inc', 'Global Industries', 'Innovation Labs'];
+
+  const [companyList, setCompanyList] = useState<string[]>(initialCompanies);
   // Local filter states (these are independent of the table columns)
   const [companyFilter, setCompanyFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
@@ -215,6 +230,23 @@ const Step1 = () => {
 
   const selectedIndustry = industryFilter || 'All';
 
+  const handleAddCompany = () => {
+    const trimmedValue = companySearchValue.trim();
+    if (trimmedValue && !companyList.includes(trimmedValue)) {
+      setCompanyList([...companyList, trimmedValue]);
+      setCompanyFilter(trimmedValue);
+      setCompanySearchValue('');
+      setCompanyOpen(false);
+    }
+  };
+
+  const showAddOption =
+    companySearchValue.trim() !== '' &&
+    !companyList.some((c) => c.toLowerCase() === companySearchValue.trim().toLowerCase());
+
+  const filteredCompanies = companyList.filter((company) =>
+    company.toLowerCase().includes(companySearchValue.toLowerCase()),
+  );
   return (
     <div className="mx-auto w-full py-4 sm:pr-2 lg:pr-4">
       <div className="mb-4 flex items-center justify-between">
@@ -239,29 +271,95 @@ const Step1 = () => {
         <h2 className="mb-4 text-lg font-semibold text-card-foreground">Basic Details</h2>
         <div className="flex gap-4 flex-1 w-full">
           <div className="space-y-2 w-full">
-            <Label htmlFor="company">Company</Label>
-            <Select
-              value={companyFilter}
-              onValueChange={(value) => setCompanyFilter(value)}
-            >
-              <SelectTrigger id="company" className="bg-background w-full">
-                <SelectValue placeholder="Select company" />
-              </SelectTrigger>
-              <SelectContent>
-                {companies.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="company" className="text-sm font-medium">
+              Company
+            </Label>
+            <Popover open={companyOpen} onOpenChange={setCompanyOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={companyOpen}
+                  className="w-full justify-between bg-white hover:bg-gray-50"
+                >
+                  <span className={cn(!companyFilter && 'text-gray-500')}>
+                    {companyFilter || 'Select company'}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                <div className="flex flex-col">
+                  {/* Search Input */}
+                  <div className="flex items-center border-b px-3">
+                    <Input
+                      placeholder="Search or add company..."
+                      value={companySearchValue}
+                      onChange={(e) => setCompanySearchValue(e.target.value)}
+                      className="h-10 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && showAddOption) {
+                          handleAddCompany();
+                        }
+                      }}
+                    />
+                    {companySearchValue && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                        onClick={() => setCompanySearchValue('')}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Options List */}
+                  <div className="max-h-[300px] overflow-y-auto">
+                    {filteredCompanies.length === 0 && !showAddOption && (
+                      <div className="px-3 py-6 text-center text-sm text-gray-500">
+                        No company found.
+                      </div>
+                    )}
+
+                    {filteredCompanies.map((company) => (
+                      <button
+                        key={company}
+                        onClick={() => {
+                          setCompanyFilter(company === companyFilter ? '' : company);
+                          setCompanyOpen(false);
+                          setCompanySearchValue('');
+                        }}
+                        className="w-full flex items-center px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            companyFilter === company ? 'opacity-100' : 'opacity-0',
+                          )}
+                        />
+                        {company}
+                      </button>
+                    ))}
+
+                    {showAddOption && (
+                      <button
+                        onClick={handleAddCompany}
+                        className="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 cursor-pointer border-t"
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add "{companySearchValue}"
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="location">Location</Label>
-            <Select
-              value={locationFilter}
-              onValueChange={(value) => setLocationFilter(value)}
-            >
+            <Label htmlFor="location" className='mb-3'>Location</Label>
+            <Select value={locationFilter} onValueChange={(value) => setLocationFilter(value)}>
               <SelectTrigger id="location" className="bg-background w-full">
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
@@ -275,27 +373,23 @@ const Step1 = () => {
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="period">Period</Label>
-            <Select
-              value={periodFilter}
-              onValueChange={(value) => setPeriodFilter(value)}
-            >
+            <Label htmlFor="period" className='mb-3'>Period</Label>
+            <Select value={periodFilter} onValueChange={(value) => setPeriodFilter(value)}>
               <SelectTrigger id="period" className="bg-background w-full">
                 <SelectValue placeholder="Period" />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {[...new Set(bots.map((bot) => bot.period))].map((period) => (
-                  <SelectItem key={period} value={period}>{period}</SelectItem>
+                  <SelectItem key={period} value={period}>
+                    {period}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="financial-year">Financial Year</Label>
-            <Select
-              value={fYearFilter}
-              onValueChange={(value) => setFYearFilter(value)}
-            >
+            <Label htmlFor="financial-year" className='mb-3'>Financial Year</Label>
+            <Select value={fYearFilter} onValueChange={(value) => setFYearFilter(value)}>
               <SelectTrigger id="financial-year" className="bg-background w-full">
                 <SelectValue placeholder="All" />
               </SelectTrigger>
@@ -309,17 +403,16 @@ const Step1 = () => {
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="industry">Industry</Label>
-            <Select
-              value={industryFilter}
-              onValueChange={(value) => setIndustryFilter(value)}
-            >
+            <Label htmlFor="industry" className='mb-3'>Industry</Label>
+            <Select value={industryFilter} onValueChange={(value) => setIndustryFilter(value)}>
               <SelectTrigger id="industry" className="bg-background w-full">
                 <SelectValue placeholder="Industry" />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {[...new Set(bots.map((bot) => bot.industry))].map((industry) => (
-                  <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+                  <SelectItem key={industry} value={industry}>
+                    {industry}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -334,14 +427,12 @@ const Step1 = () => {
         {/* Category Badge and Actions */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            {
-              selectedIndustry && selectedIndustry !== 'All' ? (
-                <Badge variant="outline" className="gap-2 px-3 py-1.5">
-                  <Sparkle className="h-4 w-4 fill-purple-300" />
-                  <span className="font-medium">{selectedIndustry}</span>
-                </Badge>
-              ) : null
-            }
+            {selectedIndustry && selectedIndustry !== 'All' ? (
+              <Badge variant="outline" className="gap-2 px-3 py-1.5">
+                <Sparkle className="h-4 w-4 fill-purple-300" />
+                <span className="font-medium">{selectedIndustry}</span>
+              </Badge>
+            ) : null}
             <span className="text-sm text-muted-foreground">
               Selected <span className="font-medium text-primary">{selectedCount}</span>/
               {bots.length} bots
@@ -397,7 +488,7 @@ const Step1 = () => {
         {/* Data Table */}
         <div className="rounded-md border">
           <Table>
-            <TableHeader className='bg-gray-50'>
+            <TableHeader className="bg-gray-50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {

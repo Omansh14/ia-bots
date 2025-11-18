@@ -21,7 +21,7 @@ const sampleList = [
   'Identify cost-saving opportunities',
 ];
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type SectionState = {
   running: boolean;
@@ -29,7 +29,15 @@ type SectionState = {
   itemStates: ('idle' | 'running' | 'done')[];
 };
 
-const Section = ({ title, items, sectionState }: { title: string; items: string[]; sectionState: SectionState }) => {
+const Section = ({
+  title,
+  items,
+  sectionState,
+}: {
+  title: string;
+  items: string[];
+  sectionState: SectionState;
+}) => {
   return (
     <div className="mb-2">
       <Accordion type="single" collapsible>
@@ -61,13 +69,16 @@ const Section = ({ title, items, sectionState }: { title: string; items: string[
                   {items.map((it, idx) => {
                     const state = sectionState.itemStates[idx];
                     return (
-                      <li key={idx} className={
-                        state === 'done'
-                          ? 'text-sm font-semibold flex items-center gap-2'
-                          : state === 'running'
-                          ? 'text-sm text-blue-500 font-medium'
-                          : 'text-sm text-muted-foreground'
-                      }>
+                      <li
+                        key={idx}
+                        className={
+                          state === 'done'
+                            ? 'text-sm font-semibold flex items-center gap-2'
+                            : state === 'running'
+                            ? 'text-sm text-blue-500 font-medium'
+                            : 'text-sm text-muted-foreground'
+                        }
+                      >
                         {state === 'done' ? (
                           <span className="flex items-center gap-2">
                             <span className="bg-green-600 rounded-full p-1 flex items-center justify-center">
@@ -78,7 +89,9 @@ const Section = ({ title, items, sectionState }: { title: string; items: string[
                         ) : (
                           <>
                             {it}
-                            {state === 'running' && <span className="ml-2 animate-pulse">Running...</span>}
+                            {state === 'running' && (
+                              <span className="ml-2 animate-pulse">Running...</span>
+                            )}
                           </>
                         )}
                       </li>
@@ -97,36 +110,60 @@ const Section = ({ title, items, sectionState }: { title: string; items: string[
 const ProcedureReview = () => {
   const navigate = useNavigate();
 
-  // Section states
-  const [sections, setSections] = useState([
-    {
-      title: 'P2P Audit Procedures',
-      items: sampleList,
-      state: {
-        running: false,
-        finished: false,
-        itemStates: Array(sampleList.length).fill('idle'),
-      },
-    },
-    {
-      title: 'H2R Audit Procedures',
-      items: sampleList.slice(0, 5),
-      state: {
-        running: false,
-        finished: false,
-        itemStates: Array(5).fill('idle'),
-      },
-    },
-    {
-      title: 'O2C Audit Procedures',
-      items: sampleList.slice(2, 8),
-      state: {
-        running: false,
-        finished: false,
-        itemStates: Array(6).fill('idle'),
-      },
-    },
-  ]);
+  // Section states - derived from selected bots in sessionStorage.step1
+  const [sections, setSections] = useState<{
+    title: string;
+    items: string[];
+    state: SectionState;
+  }[]>([]);
+
+  // On mount, read selected bots from sessionStorage and build sections grouped by category
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('step1');
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const selected = Array.isArray(parsed.selected_bots) ? parsed.selected_bots : [];
+
+      // group auditProcedure names by category
+      const groups: Record<string, string[]> = {};
+      selected.forEach((b: any) => {
+        const category = (b.category || 'Uncategorized').toString();
+        const name = (b.auditProcedure || b.name || '').toString();
+        if (!name) return;
+        if (!groups[category]) groups[category] = [];
+        groups[category].push(name);
+      });
+
+      const built = Object.keys(groups).map((category) => {
+        const items = Array.from(new Set(groups[category])); // dedupe
+        return {
+          title: `${category} Audit Procedures`,
+          items,
+          state: {
+            running: false,
+            finished: false,
+            itemStates: Array(items.length).fill('idle') as SectionState['itemStates'],
+          },
+        };
+      });
+
+      // If no selected bots, fall back to previous sample sections so UI doesn't appear empty
+      if (built.length === 0) {
+        setSections([
+          {
+            title: 'P2P Audit Procedures',
+            items: sampleList,
+            state: { running: false, finished: false, itemStates: Array(sampleList.length).fill('idle') },
+          },
+        ]);
+      } else {
+        setSections(built);
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }, []);
 
   const handleRun = async () => {
     // For each section, run items one by one
@@ -200,10 +237,17 @@ const ProcedureReview = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="lg" className="hover:cursor-pointer" onClick={() => navigate('../data-filtering')}>
+            <Button
+              variant="outline"
+              size="lg"
+              className="hover:cursor-pointer"
+              onClick={() => navigate('../data-filtering')}
+            >
               Edit Parameters
             </Button>
-            <Button size="lg" className='hover:cursor-pointer' onClick={handleRun}>Run</Button>
+            <Button size="lg" className="hover:cursor-pointer" onClick={handleRun}>
+              Run
+            </Button>
           </div>
         </div>
 
@@ -218,7 +262,11 @@ const ProcedureReview = () => {
 
         {allFinished && (
           <div className="flex justify-center mt-8">
-            <Button onClick={() => navigate('/generate-report')} className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow" size="lg">
+            <Button
+              onClick={() => navigate('/generate-report')}
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow"
+              size="lg"
+            >
               Check Report
             </Button>
           </div>

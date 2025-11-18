@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const steps = [
   { id: 1, title: 'Client Details', subtitle: 'Add client details & select audit procedures', path: '' },
@@ -25,11 +25,7 @@ const Stepper = () => {
 
           return (
             <li key={step.id} className="flex-1">
-              <NavLink
-                to={step.path}
-                className="block no-underline"
-                aria-current={isActive ? 'step' : undefined}
-              >
+
                 <div className="relative">
                   <div
                     className={`flex items-center gap-3 p-3 rounded-md ${
@@ -62,7 +58,6 @@ const Stepper = () => {
                     <div className="absolute -right-4 top-1/2 hidden h-8 w-8 -translate-y-1/2 transform rotate-45 bg-blue-500 sm:block" />
                   )}
                 </div>
-              </NavLink>
             </li>
           );
         })}

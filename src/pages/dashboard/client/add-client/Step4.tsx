@@ -19,7 +19,7 @@ const DataFiltering = () => {
   const navigate = useNavigate();
 
   return (
-    <Card className="min-h-screen">
+    <Card>
       {/* Header */}
       <header className="border-b">
         <CardHeader>

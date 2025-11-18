@@ -82,7 +82,7 @@ const UploadData = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Header */}
       <header className="border-b bg-card pr-4 py-2">
         <div className="flex items-center justify-between mx-auto">

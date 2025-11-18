@@ -358,7 +358,9 @@ const Step1 = () => {
             </Popover>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="location" className='mb-3'>Location</Label>
+            <Label htmlFor="location" className="mb-3">
+              Location
+            </Label>
             <Select value={locationFilter} onValueChange={(value) => setLocationFilter(value)}>
               <SelectTrigger id="location" className="bg-background w-full">
                 <SelectValue placeholder="Select location" />
@@ -373,7 +375,9 @@ const Step1 = () => {
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="period" className='mb-3'>Period</Label>
+            <Label htmlFor="period" className="mb-3">
+              Period
+            </Label>
             <Select value={periodFilter} onValueChange={(value) => setPeriodFilter(value)}>
               <SelectTrigger id="period" className="bg-background w-full">
                 <SelectValue placeholder="Period" />
@@ -388,7 +392,9 @@ const Step1 = () => {
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="financial-year" className='mb-3'>Financial Year</Label>
+            <Label htmlFor="financial-year" className="mb-3">
+              Financial Year
+            </Label>
             <Select value={fYearFilter} onValueChange={(value) => setFYearFilter(value)}>
               <SelectTrigger id="financial-year" className="bg-background w-full">
                 <SelectValue placeholder="All" />
@@ -403,7 +409,9 @@ const Step1 = () => {
             </Select>
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="industry" className='mb-3'>Industry</Label>
+            <Label htmlFor="industry" className="mb-3">
+              Industry
+            </Label>
             <Select value={industryFilter} onValueChange={(value) => setIndustryFilter(value)}>
               <SelectTrigger id="industry" className="bg-background w-full">
                 <SelectValue placeholder="Industry" />

@@ -31,7 +31,7 @@ const SignUpPage = () => {
     <div className="min-h-screen flex">
       {/* Left side */}
       <div className="hidden lg:flex lg:w-3/5">
-        <img src="/src/assets/signIn-bg.png" className="h-screen w-screen object-cover" />
+        <img src="/assets/signIn-bg.png" className="h-screen w-screen object-cover" />
       </div>
 
       {/* Right side - Sign In Form */}

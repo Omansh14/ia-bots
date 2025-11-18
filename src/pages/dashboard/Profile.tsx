@@ -71,7 +71,7 @@ const Profile = () => {
                     <div className="flex">
                       <div className="flex w-2/5 items-center">
                         <div className="flex gap-3 items-center">
-                          <img src="/src/assets/sparkle.svg" className="h-8 w-8" />
+                          <img src="/assets/sparkle.svg" className="h-8 w-8" />
                         </div>
                         <div className="ml-2">
                           <h2 className="text-lg font-semibold">AI Integration</h2>

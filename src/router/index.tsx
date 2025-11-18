@@ -39,11 +39,11 @@ const Router = () => {
           <Route path="data-filtering" element={<CreateClientFinalStep />} />
           <Route path="procedure-review" element={<ProcedureReview />} />
         </Route>
-
         <Route path="audit-procedures">
           <Route index element={<AuditProcedures />} />
           <Route path="create-audit-procedure" element={<></>} />
         </Route>
+        <Route path="generate-report" element={<OutputPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

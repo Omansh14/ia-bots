@@ -300,7 +300,7 @@ const OrganiseUploads = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Header */}
       <header className="border-b bg-card py-4 pr-4">
         <div className="flex items-center justify-between mx-auto">

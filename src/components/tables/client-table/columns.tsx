@@ -25,11 +25,11 @@ export const columns: ColumnDef<Client>[] = [
       const name = String(row.getValue('name') || '');
       const firstLetter = name[0]?.toUpperCase() || '';
       return (
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center justify-center">
           <span className="h-6 w-6 text-center flex items-center justify-center rounded-full bg-blue-100 text-blue-700">
             {firstLetter}
           </span>
-          {name}
+          <span className="text-center">{name}</span>
         </div>
       );
     },

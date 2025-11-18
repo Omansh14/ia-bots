@@ -69,7 +69,7 @@ const ClientTable = () => {
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -84,7 +84,7 @@ const ClientTable = () => {
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className="text-center">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -92,7 +92,7 @@ const ClientTable = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length}>No results.</TableCell>
+                  <TableCell colSpan={columns.length} className="text-center">No results.</TableCell>
                 </TableRow>
               )}
             </TableBody>

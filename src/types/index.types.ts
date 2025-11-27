@@ -12,6 +12,7 @@ export type Client = {
   name: string;
   industry: string;
   timestamp: Date;
+  lastrun?: Date;
   audit_procedures: number;
   action: string[];
 };

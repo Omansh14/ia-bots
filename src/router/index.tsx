@@ -16,6 +16,7 @@ const AuditProcedures = lazy(() => import('../pages/dashboard/AuditProcedures'))
 const ProcedureReview = lazy(() => import('../pages/dashboard/procedure-review'));
 const ClientInfoPage = lazy(() => import('../pages/dashboard/client/ClientInfo'));
 const OutputPage = lazy(() => import('../pages/dashboard/Output'));
+const CreateAuditProcedure = lazy(() => import('../pages/dashboard/CreateAuditProcedure'));
 
 const Router = () => {
   return (
@@ -41,7 +42,7 @@ const Router = () => {
         </Route>
         <Route path="audit-procedures">
           <Route index element={<AuditProcedures />} />
-          <Route path="create-audit-procedure" element={<></>} />
+          <Route path="create-audit-procedure" element={<CreateAuditProcedure />} />
         </Route>
         <Route path="generate-report" element={<OutputPage />} />
       </Route>

@@ -97,9 +97,10 @@ const UploadData = () => {
               <button
                 key={source.id}
                 onClick={() => setSelectedSource(source.id)}
-                className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors hover:cursor-pointer ${
+                disabled={source.id !== 'file-upload'}
+                className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors  ${
                   selectedSource === source.id ? 'border border-primary/50' : 'hover:bg-accent'
-                }`}
+                } ${source.id !== 'file-upload' ? 'opacity-70 hover:cursor-not-allowed' : 'hover:cursor-pointer'}`}
               >
                 <div
                   className={`mt-0.5 ${
@@ -142,7 +143,6 @@ const UploadData = () => {
               <TabsTrigger value="P2P">P2P</TabsTrigger>
               <TabsTrigger value="H2R">H2R</TabsTrigger>
               <TabsTrigger value="O2C">O2C</TabsTrigger>
-              <TabsTrigger value="Master">Master</TabsTrigger>
             </TabsList>
           </Tabs>
 

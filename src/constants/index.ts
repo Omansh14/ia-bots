@@ -6,6 +6,7 @@ const Clients: Client[] = [
     name: 'Tata Motors',
     industry: 'Automobile',
     timestamp: new Date(),
+    lastrun: new Date('2024-10-01T10:20:30Z'),
     audit_procedures: 14,
     action: ['share', 'delete'],
   },
@@ -13,6 +14,8 @@ const Clients: Client[] = [
     client_id: 'C-1002',
     name: 'Tech Innovators',
     industry: 'Technology',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     timestamp: new Date(),
     audit_procedures: 25,
     action: ['share', 'delete'],
@@ -22,6 +25,8 @@ const Clients: Client[] = [
     name: 'Global Foods',
     industry: 'Manufacturing',
     timestamp: new Date(),
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     audit_procedures: 10,
     action: ['share', 'delete'],
   },
@@ -29,6 +34,8 @@ const Clients: Client[] = [
     client_id: 'C-1004',
     name: 'EcoBuild',
     industry: 'Manufacturing',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     timestamp: new Date(),
     audit_procedures: 16,
     action: ['share', 'delete'],
@@ -37,6 +44,8 @@ const Clients: Client[] = [
     client_id: 'C-1005',
     name: 'Finserve Solutions',
     industry: 'Technology',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     timestamp: new Date(),
     audit_procedures: 20,
     action: ['share', 'delete'],
@@ -45,6 +54,8 @@ const Clients: Client[] = [
     client_id: 'C-1006',
     name: 'Greenwave Energy',
     industry: 'Energy',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     timestamp: new Date(),
     audit_procedures: 8,
     action: ['share', 'delete'],
@@ -53,6 +64,8 @@ const Clients: Client[] = [
     client_id: 'C-1007',
     name: 'Apex Pharmaceuticals',
     industry: 'Healthcare',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     timestamp: new Date(),
     audit_procedures: 18,
     action: ['share', 'delete'],
@@ -60,6 +73,8 @@ const Clients: Client[] = [
   {
     client_id: 'C-1008',
     name: 'Urban Retail Co.',
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     industry: 'Retail',
     timestamp: new Date(),
     audit_procedures: 12,
@@ -70,6 +85,8 @@ const Clients: Client[] = [
     name: 'Orbit Logistics',
     industry: 'Transportation',
     timestamp: new Date(),
+    lastrun: new Date('2024-10-01T10:20:30Z'),
+
     audit_procedures: 22,
     action: ['share', 'delete'],
   },
@@ -77,255 +94,274 @@ const Clients: Client[] = [
 
 const bots: Bot[] = [
   {
-    "id": "1",
-    "category": "P2P",
-    "auditProcedure": "Validate Vendor KYC",
-    "description": "Validates vendor master data for missing or invalid KYC fields such as PAN, GST, or bank account details.",
-    "dataUsed": ["Vendor Master"]
+    id: '1',
+    category: 'P2P',
+    auditProcedure: 'Validate Vendor KYC',
+    description:
+      'Validates vendor master data for missing or invalid KYC fields such as PAN, GST, or bank account details.',
+    dataUsed: ['Vendor Master'],
   },
   {
-    "id": "2",
-    "category": "P2P",
-    "auditProcedure": "PO-GRN-Invoice Match",
-    "description": "Validate that invoices are matched against approved purchase orders and corresponding GRNs to ensure 3-way matching.",
-    "dataUsed": ["P2P Sample"]
+    id: '2',
+    category: 'P2P',
+    auditProcedure: 'PO-GRN-Invoice Match',
+    description:
+      'Validate that invoices are matched against approved purchase orders and corresponding GRNs to ensure 3-way matching.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "3",
-    "category": "P2P",
-    "auditProcedure": "Post-Invoice POs",
-    "description": "Flags purchase orders created after the corresponding invoice date, indicating potential control bypass.",
-    "dataUsed": ["P2P Sample"]
+    id: '3',
+    category: 'P2P',
+    auditProcedure: 'Post-Invoice POs',
+    description:
+      'Flags purchase orders created after the corresponding invoice date, indicating potential control bypass.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "4",
-    "category": "P2P",
-    "auditProcedure": "Split Orders",
-    "description": "Analyzes procurement transactions to detect multiple small POs created for the same vendor to bypass approval thresholds.",
-    "dataUsed": ["P2P Sample"]
+    id: '4',
+    category: 'P2P',
+    auditProcedure: 'Split Orders',
+    description:
+      'Analyzes procurement transactions to detect multiple small POs created for the same vendor to bypass approval thresholds.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "5",
-    "category": "P2P",
-    "auditProcedure": "Duplicate Vendors",
-    "description": "Detects and prevents creation of duplicate vendor records by matching key identifiers like PAN, GST, and bank account.",
-    "dataUsed": ["Vendor Master"]
+    id: '5',
+    category: 'P2P',
+    auditProcedure: 'Duplicate Vendors',
+    description:
+      'Detects and prevents creation of duplicate vendor records by matching key identifiers like PAN, GST, and bank account.',
+    dataUsed: ['Vendor Master'],
   },
   {
-    "id": "6",
-    "category": "P2P",
-    "auditProcedure": "Unauthorized Vendor Bank Change",
-    "description": "Monitors vendor master data updates to detect suspicious or unauthorized bank account changes.",
-    "dataUsed": ["P2P Sample"]
+    id: '6',
+    category: 'P2P',
+    auditProcedure: 'Unauthorized Vendor Bank Change',
+    description:
+      'Monitors vendor master data updates to detect suspicious or unauthorized bank account changes.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "7",
-    "category": "P2P",
-    "auditProcedure": "Validate Vendor GST",
-    "description": "Validates vendor GST number format and correctness based on standard GSTIN validation rules.",
-    "dataUsed": ["P2P Sample"]
+    id: '7',
+    category: 'P2P',
+    auditProcedure: 'Validate Vendor GST',
+    description:
+      'Validates vendor GST number format and correctness based on standard GSTIN validation rules.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "8",
-    "category": "P2P",
-    "auditProcedure": "PO Approval Bypass",
-    "description": "Identifies purchase orders created without passing through the designated approval workflow.",
-    "dataUsed": ["P2P Sample"]
+    id: '8',
+    category: 'P2P',
+    auditProcedure: 'PO Approval Bypass',
+    description:
+      'Identifies purchase orders created without passing through the designated approval workflow.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "9",
-    "category": "P2P",
-    "auditProcedure": "Price Variance Analysis",
-    "description": "Compares PO item prices with historical prices for the same item or vendor to detect unusual rate changes.",
-    "dataUsed": ["P2P Sample"]
+    id: '9',
+    category: 'P2P',
+    auditProcedure: 'Price Variance Analysis',
+    description:
+      'Compares PO item prices with historical prices for the same item or vendor to detect unusual rate changes.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "10",
-    "category": "P2P",
-    "auditProcedure": "Excessive Emergency Purchases",
-    "description": "Counts purchase orders marked as 'urgent' or 'emergency' to identify potential misuse of emergency purchase controls.",
-    "dataUsed": ["Vendor Master"]
+    id: '10',
+    category: 'P2P',
+    auditProcedure: 'Excessive Emergency Purchases',
+    description:
+      "Counts purchase orders marked as 'urgent' or 'emergency' to identify potential misuse of emergency purchase controls.",
+    dataUsed: ['Vendor Master'],
   },
   {
-    "id": "11",
-    "category": "P2P",
-    "auditProcedure": "Vendor Concentration Risk",
-    "description": "Calculates spend concentration per vendor to highlight over-dependence on a few vendors.",
-    "dataUsed": ["Vendor Master"]
+    id: '11',
+    category: 'P2P',
+    auditProcedure: 'Vendor Concentration Risk',
+    description:
+      'Calculates spend concentration per vendor to highlight over-dependence on a few vendors.',
+    dataUsed: ['Vendor Master'],
   },
   {
-    "id": "12",
-    "category": "P2P",
-    "auditProcedure": "GRN Delay Tracking",
-    "description": "Tracks delays between goods delivery date and GRN posting date to detect process inefficiencies.",
-    "dataUsed": ["P2P Sample"]
+    id: '12',
+    category: 'P2P',
+    auditProcedure: 'GRN Delay Tracking',
+    description:
+      'Tracks delays between goods delivery date and GRN posting date to detect process inefficiencies.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "13",
-    "category": "P2P",
-    "auditProcedure": "Unmatched GRNs",
-    "description": "Identifies GRNs that remain unmatched with invoices beyond a specified number of days.",
-    "dataUsed": ["P2P Sample"]
+    id: '13',
+    category: 'P2P',
+    auditProcedure: 'Unmatched GRNs',
+    description:
+      'Identifies GRNs that remain unmatched with invoices beyond a specified number of days.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "14",
-    "category": "P2P",
-    "auditProcedure": "Over-receipt",
-    "description": "Flags GRNs where received quantity exceeds PO quantity, indicating possible over-receipt issues.",
-    "dataUsed": ["P2P Sample", "Vendor Master"]
+    id: '14',
+    category: 'P2P',
+    auditProcedure: 'Over-receipt',
+    description:
+      'Flags GRNs where received quantity exceeds PO quantity, indicating possible over-receipt issues.',
+    dataUsed: ['P2P Sample', 'Vendor Master'],
   },
   {
-    "id": "15",
-    "category": "P2P",
-    "auditProcedure": "Payment Term Adherence",
-    "description": "Analyzes vendor payment timelines against agreed payment terms.",
-    "dataUsed": ["P2P Sample"]
+    id: '15',
+    category: 'P2P',
+    auditProcedure: 'Payment Term Adherence',
+    description: 'Analyzes vendor payment timelines against agreed payment terms.',
+    dataUsed: ['P2P Sample'],
   },
   {
-    "id": "16",
-    "category": "P2P",
-    "auditProcedure": "Duplicate Invoice Detection",
-    "description": "Detects duplicate invoices by comparing vendor, invoice date, and invoice amount combinations.",
-    "dataUsed": ["O2C Sample"]
+    id: '16',
+    category: 'P2P',
+    auditProcedure: 'Duplicate Invoice Detection',
+    description:
+      'Detects duplicate invoices by comparing vendor, invoice date, and invoice amount combinations.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "17",
-    "category": "P2P",
-    "auditProcedure": "Invoice to Inactive Vendor",
-    "description": "Identifies invoices issued to vendors whose status is inactive or blocked.",
-    "dataUsed": ["O2C Sample"]
+    id: '17',
+    category: 'P2P',
+    auditProcedure: 'Invoice to Inactive Vendor',
+    description: 'Identifies invoices issued to vendors whose status is inactive or blocked.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "18",
-    "category": "P2P",
-    "auditProcedure": "Non-PO Invoices",
-    "description": "Flags invoices that do not reference any purchase order.",
-    "dataUsed": ["Customer Master"]
+    id: '18',
+    category: 'P2P',
+    auditProcedure: 'Non-PO Invoices',
+    description: 'Flags invoices that do not reference any purchase order.',
+    dataUsed: ['Customer Master'],
   },
   {
-    "id": "19",
-    "category": "P2P",
-    "auditProcedure": "Foreign Currency Mismatch",
-    "description": "Identifies invoices where the currency does not match the associated purchase order currency.",
-    "dataUsed": ["O2C Sample"]
+    id: '19',
+    category: 'P2P',
+    auditProcedure: 'Foreign Currency Mismatch',
+    description:
+      'Identifies invoices where the currency does not match the associated purchase order currency.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "20",
-    "category": "P2P",
-    "auditProcedure": "Round Sum Invoices",
-    "description": "Flags invoices with unusually rounded values such as exact multiples of 1,000.",
-    "dataUsed": ["O2C Sample"]
+    id: '20',
+    category: 'P2P',
+    auditProcedure: 'Round Sum Invoices',
+    description: 'Flags invoices with unusually rounded values such as exact multiples of 1,000.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "21",
-    "category": "O2C",
-    "auditProcedure": "Credit Limit Breach",
-    "description": "Identifies customers whose outstanding receivables and open sales orders exceed their credit limits.",
-    "dataUsed": ["O2C Sample"]
+    id: '21',
+    category: 'O2C',
+    auditProcedure: 'Credit Limit Breach',
+    description:
+      'Identifies customers whose outstanding receivables and open sales orders exceed their credit limits.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "22",
-    "category": "O2C",
-    "auditProcedure": "Duplicate Invoices",
-    "description": "Detects duplicate sales invoices using combinations like customer, date, and invoice amount.",
-    "dataUsed": ["O2C Sample"]
+    id: '22',
+    category: 'O2C',
+    auditProcedure: 'Duplicate Invoices',
+    description:
+      'Detects duplicate sales invoices using combinations like customer, date, and invoice amount.',
+    dataUsed: ['O2C Sample'],
   },
   {
-    "id": "23",
-    "category": "H2R",
-    "auditProcedure": "Ghost Employee Detection",
-    "description": "Detects employees receiving payroll but having no attendance records.",
-    "dataUsed": ["Employee Master"]
+    id: '23',
+    category: 'H2R',
+    auditProcedure: 'Ghost Employee Detection',
+    description: 'Detects employees receiving payroll but having no attendance records.',
+    dataUsed: ['Employee Master'],
   },
   {
-    "id": "24",
-    "category": "H2R",
-    "auditProcedure": "Duplicate Employees",
-    "description": "Matches PAN, bank account, or other identifiers to detect duplicate employee records.",
-    "dataUsed": ["Employee Master", "Attendance Register"]
+    id: '24',
+    category: 'H2R',
+    auditProcedure: 'Duplicate Employees',
+    description:
+      'Matches PAN, bank account, or other identifiers to detect duplicate employee records.',
+    dataUsed: ['Employee Master', 'Attendance Register'],
   },
   {
-    "id": "25",
-    "category": "H2R",
-    "auditProcedure": "Inactive Employees in Payroll",
-    "description": "Identifies employees still appearing in payroll after their recorded exit date.",
-    "dataUsed": ["Employee Master", "Attendance Register"]
+    id: '25',
+    category: 'H2R',
+    auditProcedure: 'Inactive Employees in Payroll',
+    description: 'Identifies employees still appearing in payroll after their recorded exit date.',
+    dataUsed: ['Employee Master', 'Attendance Register'],
   },
 
   // IDs 26–35: No data provided → empty arrays
   {
-    "id": "26",
-    "category": "O2C",
-    "auditProcedure": "Zero-Priced Invoices",
-    "description": "Identifies invoices with zero total value.",
-    "dataUsed": []
+    id: '26',
+    category: 'O2C',
+    auditProcedure: 'Zero-Priced Invoices',
+    description: 'Identifies invoices with zero total value.',
+    dataUsed: [],
   },
   {
-    "id": "27",
-    "category": "O2C",
-    "auditProcedure": "Missing Customer Master Data",
-    "description": "Flags customer master records missing key fields like GST, PAN, or credit terms.",
-    "dataUsed": []
+    id: '27',
+    category: 'O2C',
+    auditProcedure: 'Missing Customer Master Data',
+    description: 'Flags customer master records missing key fields like GST, PAN, or credit terms.',
+    dataUsed: [],
   },
   {
-    "id": "28",
-    "category": "O2C",
-    "auditProcedure": "Overdue Delivery",
-    "description": "Compares sales order date with delivery date to flag delayed deliveries.",
-    "dataUsed": []
+    id: '28',
+    category: 'O2C',
+    auditProcedure: 'Overdue Delivery',
+    description: 'Compares sales order date with delivery date to flag delayed deliveries.',
+    dataUsed: [],
   },
   {
-    "id": "29",
-    "category": "O2C",
-    "auditProcedure": "Dispatch Without Invoice",
-    "description": "Identifies dispatch records where goods have been shipped but no invoice has been generated.",
-    "dataUsed": []
+    id: '29',
+    category: 'O2C',
+    auditProcedure: 'Dispatch Without Invoice',
+    description:
+      'Identifies dispatch records where goods have been shipped but no invoice has been generated.',
+    dataUsed: [],
   },
   {
-    "id": "30",
-    "category": "O2C",
-    "auditProcedure": "Excessive Small-Value Sales",
-    "description": "Identifies repeated small-value transactions below a threshold.",
-    "dataUsed": []
+    id: '30',
+    category: 'O2C',
+    auditProcedure: 'Excessive Small-Value Sales',
+    description: 'Identifies repeated small-value transactions below a threshold.',
+    dataUsed: [],
   },
   {
-    "id": "31",
-    "category": "H2R",
-    "auditProcedure": "Ghost Employee Detection",
-    "description": "Detects employees receiving payroll but having no attendance records.",
-    "dataUsed": []
+    id: '31',
+    category: 'H2R',
+    auditProcedure: 'Ghost Employee Detection',
+    description: 'Detects employees receiving payroll but having no attendance records.',
+    dataUsed: [],
   },
   {
-    "id": "32",
-    "category": "H2R",
-    "auditProcedure": "Duplicate Employees",
-    "description": "Matches PAN, bank account, or other identifiers to detect duplicate employee records.",
-    "dataUsed": []
+    id: '32',
+    category: 'H2R',
+    auditProcedure: 'Duplicate Employees',
+    description:
+      'Matches PAN, bank account, or other identifiers to detect duplicate employee records.',
+    dataUsed: [],
   },
   {
-    "id": "33",
-    "category": "H2R",
-    "auditProcedure": "Inactive Employees in Payroll",
-    "description": "Identifies employees still appearing in payroll after their recorded exit date.",
-    "dataUsed": []
+    id: '33',
+    category: 'H2R',
+    auditProcedure: 'Inactive Employees in Payroll',
+    description: 'Identifies employees still appearing in payroll after their recorded exit date.',
+    dataUsed: [],
   },
   {
-    "id": "34",
-    "category": "H2R",
-    "auditProcedure": "Statutory Compliance – PF",
-    "description": "Checks PF deposit date against statutory due dates.",
-    "dataUsed": []
+    id: '34',
+    category: 'H2R',
+    auditProcedure: 'Statutory Compliance – PF',
+    description: 'Checks PF deposit date against statutory due dates.',
+    dataUsed: [],
   },
   {
-    "id": "35",
-    "category": "H2R",
-    "auditProcedure": "Statutory Compliance – ESI",
-    "description": "Checks ESI deposit date against statutory due dates.",
-    "dataUsed": []
-  }
+    id: '35',
+    category: 'H2R',
+    auditProcedure: 'Statutory Compliance – ESI',
+    description: 'Checks ESI deposit date against statutory due dates.',
+    dataUsed: [],
+  },
 ];
-
-
 
 const audit_Procedures: AuditProcedure[] = [
   {
@@ -365,88 +401,87 @@ const audit_Procedures: AuditProcedure[] = [
   },
 ];
 
-
 export const auditData: AuditData[] = [
   {
-    jobId: "10102025-001",
-    location: "Mumbai",
+    jobId: '10102025-001',
+    location: 'Mumbai',
     auditProcedures: 112,
     exceptions: 167,
-    startDate: "2024-04-23",
-    endDate: "2025-01-03",
-    createdOn: "2024-04-23",
-    status: "In-Progress",
+    startDate: '2024-04-23',
+    endDate: '2025-01-03',
+    createdOn: '2024-04-23',
+    status: 'In-Progress',
   },
   {
-    jobId: "20240315-004",
-    location: "Bengaluru",
+    jobId: '20240315-004',
+    location: 'Bengaluru',
     auditProcedures: 187,
     exceptions: 213,
-    startDate: "2024-05-16",
-    endDate: "2025-02-14",
-    createdOn: "2024-05-16",
-    status: "Completed",
+    startDate: '2024-05-16',
+    endDate: '2025-02-14',
+    createdOn: '2024-05-16',
+    status: 'Completed',
   },
   {
-    jobId: "20240315-008",
-    location: "Chennai",
+    jobId: '20240315-008',
+    location: 'Chennai',
     auditProcedures: 145,
     exceptions: 154,
-    startDate: "2024-06-28",
-    endDate: "2025-03-29",
-    createdOn: "2024-06-28",
-    status: "Inactive",
+    startDate: '2024-06-28',
+    endDate: '2025-03-29',
+    createdOn: '2024-06-28',
+    status: 'Inactive',
   },
   {
-    jobId: "20240315-007",
-    location: "Kolkata",
+    jobId: '20240315-007',
+    location: 'Kolkata',
     auditProcedures: 163,
     exceptions: 189,
-    startDate: "2024-07-04",
-    endDate: "2025-04-17",
-    createdOn: "2024-07-04",
-    status: "Completed",
+    startDate: '2024-07-04',
+    endDate: '2025-04-17',
+    createdOn: '2024-07-04',
+    status: 'Completed',
   },
   {
-    jobId: "20240315-006",
-    location: "Hyderabad",
+    jobId: '20240315-006',
+    location: 'Hyderabad',
     auditProcedures: 152,
     exceptions: 172,
-    startDate: "2024-08-19",
-    endDate: "2025-05-22",
-    createdOn: "2024-08-19",
-    status: "Inactive",
+    startDate: '2024-08-19',
+    endDate: '2025-05-22',
+    createdOn: '2024-08-19',
+    status: 'Inactive',
   },
   {
-    jobId: "20240315-003",
-    location: "Pune",
+    jobId: '20240315-003',
+    location: 'Pune',
     auditProcedures: 198,
     exceptions: 234,
-    startDate: "2024-09-22",
-    endDate: "2025-06-03",
-    createdOn: "2024-09-22",
-    status: "Inactive",
+    startDate: '2024-09-22',
+    endDate: '2025-06-03',
+    createdOn: '2024-09-22',
+    status: 'Inactive',
   },
   {
-    jobId: "20240315-002",
-    location: "Ahmedabad",
+    jobId: '20240315-002',
+    location: 'Ahmedabad',
     auditProcedures: 105,
     exceptions: 87,
-    startDate: "2024-10-01",
-    endDate: "2025-07-18",
-    createdOn: "2024-10-01",
-    status: "Inactive",
+    startDate: '2024-10-01',
+    endDate: '2025-07-18',
+    createdOn: '2024-10-01',
+    status: 'Inactive',
   },
   {
-    jobId: "20240315-008",
-    location: "Surat",
+    jobId: '20240315-008',
+    location: 'Surat',
     auditProcedures: 176,
     exceptions: 195,
-    startDate: "2024-11-15",
-    endDate: "2025-08-26",
-    createdOn: "2024-11-15",
-    status: "Completed",
+    startDate: '2024-11-15',
+    endDate: '2025-08-26',
+    createdOn: '2024-11-15',
+    status: 'Completed',
   },
-]
+];
 
-export {bots, Clients, audit_Procedures};
+export { bots, Clients, audit_Procedures };

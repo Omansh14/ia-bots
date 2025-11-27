@@ -1,11 +1,42 @@
 import type { Client } from '@/types/index.types';
 import { type ColumnDef } from '@tanstack/react-table';
 import { Badge } from '../../ui/badge';
+import { Checkbox } from '../../ui/checkbox';
 import moment, { type MomentInput } from 'moment';
-import { Share2, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const getInitials = (name?: string) => {
+  if (!name) return '';
+  const parts = String(name)
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return parts[0]?.[0]?.toUpperCase() ?? '';
+};
+
 export const columns: ColumnDef<Client>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'client_id',
     header: 'CLIENT ID',
@@ -23,11 +54,11 @@ export const columns: ColumnDef<Client>[] = [
     header: 'CLIENT NAME',
     cell: ({ row }) => {
       const name = String(row.getValue('name') || '');
-      const firstLetter = name[0]?.toUpperCase() || '';
+      const initials = getInitials(name);
       return (
-        <div className="flex gap-3 items-center justify-center">
-          <span className="h-6 w-6 text-center flex items-center justify-center rounded-full bg-blue-100 text-blue-700">
-            {firstLetter}
+        <div className="flex gap-3 items-center">
+          <span className="h-8 w-8 text-center flex items-center justify-center rounded-full bg-blue-100 text-blue-700">
+            {initials}
           </span>
           <span className="text-center">{name}</span>
         </div>
@@ -38,17 +69,17 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: 'industry',
     header: 'INDUSTRY',
     cell: ({ row }) => (
-      <Badge variant="default" className="text-xs bg-purple-200 text-purple-800 px-2  rounded-full">
+      <Badge variant="default" className="text-xs bg-purple-200 text-purple-800 px-2 rounded-full">
         {row.getValue('industry')}
       </Badge>
     ),
   },
   {
     accessorKey: 'timestamp',
-    header: 'TIMESTAMP',
+    header: 'CREATED ON',
     cell: ({ row }) => {
       const timestamp = row.getValue('timestamp') as MomentInput;
-      const formattedDate = timestamp ? moment(timestamp).format('llll') : '';
+      const formattedDate = timestamp ? moment(timestamp).format('lll') : '';
       return <div>{formattedDate}</div>;
     },
   },
@@ -56,48 +87,16 @@ export const columns: ColumnDef<Client>[] = [
     accessorKey: 'audit_procedures',
     header: 'AUDIT PROCEDURES',
     cell: ({ row }) => (
-      <div className="flex justify-center">{row.getValue('audit_procedures')}</div>
+      <div className="flex px-10">{row.getValue('audit_procedures')}</div>
     ),
   },
   {
-    accessorKey: 'action',
-    header: 'ACTION',
+    accessorKey: 'lastrun',
+    header: 'LAST RUN',
     cell: ({ row }) => {
-      const actions = (row.getValue('action') || []) as string[];
-      const showShare = actions.includes('share');
-      const showDelete = actions.includes('delete');
-
-      return (
-        <div className="flex items-center gap-2">
-          {showShare && (
-            <button
-              type="button"
-              title="Share"
-              className="p-1 rounded hover:bg-muted"
-              onClick={(e) => {
-                e.stopPropagation();
-                // TODO: implement share handler
-              }}
-            >
-              <Share2 className="h-5 w-5 text-blue-600" />
-            </button>
-          )}
-
-          {showDelete && (
-            <button
-              type="button"
-              title="Delete"
-              className="p-1 rounded hover:bg-muted"
-              onClick={(e) => {
-                e.stopPropagation();
-                // TODO: implement delete handler
-              }}
-            >
-              <Trash className="h-5 w-5 text-red-600" />
-            </button>
-          )}
-        </div>
-      );
+      const lastRun = row.getValue('lastrun') as MomentInput;
+      const formattedDate = lastRun ? moment(lastRun).format('lll')  : 'Never';
+      return <div>{formattedDate}</div>;
     },
-  },
+  }, 
 ];

@@ -16,6 +16,7 @@ const AuditProcedures = lazy(() => import('../pages/dashboard/AuditProcedures'))
 const ProcedureReview = lazy(() => import('../pages/dashboard/procedure-review'));
 const ClientInfoPage = lazy(() => import('../pages/dashboard/client/ClientInfo'));
 const OutputPage = lazy(() => import('../pages/dashboard/Output'));
+const CreateAuditProcedure = lazy(() => import('../pages/dashboard/CreateAuditProcedure'));
 
 const Router = () => {
   return (
@@ -31,17 +32,17 @@ const Router = () => {
             <Route index element={<CreateClientStep1 />} />
             <Route path="upload-data" element={<CreateClientStep2 />} />
             <Route path="organise-upload" element={<CreateClientStep3 />} />
+            <Route path="procedure-review" element={<ProcedureReview />} />
           </Route>
           <Route path=":id">
             <Route index element={<ClientInfoPage />} />
             <Route path=":jobId" element={<OutputPage />} />
           </Route>
           <Route path="data-filtering" element={<CreateClientFinalStep />} />
-          <Route path="procedure-review" element={<ProcedureReview />} />
         </Route>
         <Route path="audit-procedures">
           <Route index element={<AuditProcedures />} />
-          <Route path="create-audit-procedure" element={<></>} />
+          <Route path="create-audit-procedure" element={<CreateAuditProcedure />} />
         </Route>
         <Route path="generate-report" element={<OutputPage />} />
       </Route>

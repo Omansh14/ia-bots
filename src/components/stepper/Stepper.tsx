@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 
 const steps = [
-  { id: 1, title: 'Client Details', subtitle: 'Add client details & select audit procedures', path: '' },
-  { id: 2, title: 'Upload Your Dataset', subtitle: 'Upload your data', path: 'upload-data' },
-  { id: 3, title: 'Organise Your Files', subtitle: 'Organise your files', path: 'organise-upload' },
+  { id: 1, title: 'Select Client', subtitle: 'Choose an existing client to run your automation for', path: '' },
+  { id: 2, title: 'Upload Data', subtitle: 'Upload the data files for selected client', path: 'upload-data' },
+  { id: 3, title: 'Validate Your Workflow', subtitle: 'Validate Audit Procedures & Mapping', path: 'organise-upload' },
 ];
 
 const Stepper = () => {
@@ -12,7 +12,7 @@ const Stepper = () => {
   // determine active step by checking pathname end
   const activeIndex = (() => {
     if (pathname.endsWith('/upload-data')) return 1;
-    if (pathname.endsWith('/organise-upload')) return 2;
+    if (pathname.endsWith('/procedure-review')) return 2;
     return 0;
   })();
 

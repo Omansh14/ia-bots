@@ -42,12 +42,6 @@ const RefineData = ({ fileNames }: { fileNames: string[] }) => {
         >
           O2C
         </TabsTrigger>
-        <TabsTrigger
-          value="other"
-          className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-        >
-          Other
-        </TabsTrigger>
       </TabsList>
 
       {/* Content for each category tab */}

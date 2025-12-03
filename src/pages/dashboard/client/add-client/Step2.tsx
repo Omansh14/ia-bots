@@ -20,6 +20,7 @@ const UploadData = () => {
   const [selectedSource, setSelectedSource] = useState('file-upload');
   const [activeTab, setActiveTab] = useState('P2P');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -60,169 +61,205 @@ const UploadData = () => {
   ];
 
   const handleSubmit = () => {
-    navigate('../organise-upload');
+    setIsValidating(true);
+    // simulate validation time (2s), blur applied via isValidating
+    setTimeout(() => {
+      setIsValidating(false);
+      navigate('../procedure-review');
+      // navigate('../organise-upload');
+    }, 2000);
   };
 
   return (
-    <div className="bg-background">
-      {/* Header */}
-      <header className="border-b bg-card pr-4 py-2">
-        <div className="flex items-center justify-between mx-auto">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Upload Data</h1>
-              <p className="text-sm text-muted-foreground">
-                Upload the data files and document evidence your bots need to get started
-              </p>
+    <div className="bg-background relative min-h-screen">
+      {/* Blur overlay wrapper */}
+      <div className={isValidating ? 'filter blur-md pointer-events-none' : ''}>
+        {/* Header */}
+        <header className="border-b bg-card pr-4 py-2">
+          <div className="flex items-center justify-between mx-auto">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-8 w-8">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">Upload Data</h1>
+                <p className="text-sm text-muted-foreground">
+                  Upload the data files and document evidence your bots need to get started
+                </p>
+              </div>
             </div>
+            <Button size="lg" onClick={handleSubmit}>
+              Save & Next
+            </Button>
           </div>
-          <Button size="lg" onClick={handleSubmit}>
-            Save & Next
-          </Button>
-        </div>
-      </header>
+        </header>
 
-      <div className="flex max-w-[1600px] mx-auto">
-        {/* Sidebar */}
-        <aside className="w-64 border-r bg-card px-2 py-4">
-          <div className="mb-4">
-            <h2 className="text-sm font-semibold text-foreground mb-2">Data Sources</h2>
-            <p className="text-xs text-muted-foreground">Choose how to import your data</p>
-          </div>
-          <div className="space-y-1">
-            {dataSources.map((source) => (
-              <button
-                key={source.id}
-                onClick={() => setSelectedSource(source.id)}
-                className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors hover:cursor-pointer ${
-                  selectedSource === source.id ? 'border border-primary/50' : 'hover:bg-accent'
-                }`}
-              >
-                <div
-                  className={`mt-0.5 ${
-                    selectedSource === source.id ? 'text-primary' : 'text-muted-foreground'
+        <div className="flex max-w-[1600px] mx-auto">
+          {/* Sidebar */}
+          <aside className="w-64 border-r bg-card px-2 py-4">
+            <div className="mb-4">
+              <h2 className="text-sm font-semibold text-foreground mb-2">Data Sources</h2>
+              <p className="text-xs text-muted-foreground">Choose how to import your data</p>
+            </div>
+            <div className="space-y-1">
+              {dataSources.map((source) => (
+                <button
+                  key={source.id}
+                  onClick={() => setSelectedSource(source.id)}
+                  disabled={source.id !== 'file-upload'}
+                  className={`w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors  ${
+                    selectedSource === source.id ? 'border border-primary/50' : 'hover:bg-accent'
+                  } ${
+                    source.id !== 'file-upload'
+                      ? 'opacity-70 hover:cursor-not-allowed'
+                      : 'hover:cursor-pointer'
                   }`}
                 >
-                  {source.icon}
-                </div>
-                <div className="flex-1 min-w-0">
                   <div
-                    className={`text-sm font-medium ${
-                      selectedSource === source.id ? 'text-primary' : 'text-foreground'
+                    className={`mt-0.5 ${
+                      selectedSource === source.id ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   >
-                    {source.title}
+                    {source.icon}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{source.description}</div>
+                  <div className="flex-1 min-w-0">
+                    <div
+                      className={`text-sm font-medium ${
+                        selectedSource === source.id ? 'text-primary' : 'text-foreground'
+                      }`}
+                    >
+                      {source.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{source.description}</div>
+                  </div>
+                </button>
+              ))}
+              <div className="w-full flex items-start gap-3 p-3 rounded-lg text-left bg-amber-100">
+                <div className="mt-0.5">
+                  <CircleAlert className="w-4 h-4 text-gray-700" />
                 </div>
-              </button>
-            ))}
-            <div className="w-full flex items-start gap-3 p-3 rounded-lg text-left bg-amber-100">
-              <div className="mt-0.5">
-                <CircleAlert className="w-4 h-4 text-gray-700" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium text-gray-700">Quick Start</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    Upload a file to begin data processing and mapping
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-700">Quick Start</div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  Upload a file to begin data processing and mapping
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 p-6">
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+              <TabsList className="p-1 bg-white">
+                <TabsTrigger value="P2P">P2P</TabsTrigger>
+                <TabsTrigger value="H2R">H2R</TabsTrigger>
+                <TabsTrigger value="O2C">O2C</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {/* Upload Files Section (moved into UploadFiles component) */}
+            <UploadFiles tab={activeTab} />
+
+            {/* Document Evidence Section (only for P2P) */}
+            {activeTab === 'P2P' && (
+              <div className="bg-card rounded-lg border p-6">
+                <h3 className="text-lg font-semibold text-foreground mb-1">Document Evidence</h3>
+
+                <div className="grid grid-cols-2 gap-6 mt-6">
+                  {/* Left Column */}
+                  <div className="space-y-6">
+                    <div className="relative">
+                      <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
+                        PAN certificate
+                      </Label>
+                      <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
+                        Prevent duplicate vendors
+                      </span>
+                      <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
+                        <span className="text-sm text-muted-foreground">
+                          {selectedFile ? selectedFile.name : 'Upload File'}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => document.getElementById('pan-certificate')?.click()}
+                          type="button"
+                        >
+                          <Upload className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Input
+                        id="pan-certificate"
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="space-y-6">
+                    <div className="relative">
+                      <Label htmlFor="gst-certificate" className="text-sm font-medium mb-2 block">
+                        Ghost employee detection
+                      </Label>
+                      <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
+                        GST Certificate
+                      </span>
+                      <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
+                        <span className="text-sm text-muted-foreground">
+                          {selectedFile ? selectedFile.name : 'Upload File'}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => document.getElementById('gst-certificate')?.click()}
+                          type="button"
+                        >
+                          <Upload className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Input
+                        id="gst-certificate"
+                        type="file"
+                        className="hidden"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+
+      {/* Dark overlay when validating */}
+      {isValidating && (
+        <div className="fixed inset-0 bg-black/30 z-40 pointer-events-none" />
+      )}
+
+      {/* Bottom validating bar - outside blur wrapper */}
+      {isValidating && (
+        <div className="fixed inset-x-0 bottom-0 z-50 bg-blue-100">
+          <div className="w-full">
+            <div className="rounded-t-md overflow-hidden shadow-lg">
+              <div className="bg-white/90 backdrop-blur-sm">
+                <div className="h-12 flex items-center justify-center">
+                  <span className="text-base font-semibold text-blue-700">Validating Data...</span>
+                </div>
+                <div className="h-1 bg-gray-200">
+                  <div className="h-full bg-blue-500 animate-pulse" style={{ width: '100%' }} />
                 </div>
               </div>
             </div>
           </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-            <TabsList className="p-1 bg-white">
-              <TabsTrigger value="P2P">P2P</TabsTrigger>
-              <TabsTrigger value="H2R">H2R</TabsTrigger>
-              <TabsTrigger value="O2C">O2C</TabsTrigger>
-              <TabsTrigger value="Master">Master</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* Upload Files Section (moved into UploadFiles component) */}
-          <UploadFiles tab={activeTab} />
-
-          {/* Document Evidence Section (only for P2P) */}
-          {activeTab === 'P2P' && (
-            <div className="bg-card rounded-lg border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-1">Document Evidence</h3>
-
-              <div className="grid grid-cols-2 gap-6 mt-6">
-                {/* Left Column */}
-                <div className="space-y-6">
-                  <div className="relative">
-                    <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
-                      PAN certificate
-                    </Label>
-                    <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
-                      Prevent duplicate vendors
-                    </span>
-                    <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
-                      <span className="text-sm text-muted-foreground">
-                        {selectedFile ? selectedFile.name : 'Upload File'}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => document.getElementById('pan-certificate')?.click()}
-                        type="button"
-                      >
-                        <Upload className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <Input
-                      id="pan-certificate"
-                      type="file"
-                      className="hidden"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={handleFileChange}
-                    />
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-6">
-                  <div className="relative">
-                    <Label htmlFor="pan-certificate" className="text-sm font-medium mb-2 block">
-                      Ghost employee detection
-                    </Label>
-                    <span className="text-gray-500 font-normal cursor-pointer absolute right-2 top-1 text-xs">
-                      GST Certificate
-                    </span>
-                    <div className="border rounded-lg py-2 px-4 flex items-center justify-between bg-muted/30">
-                      <span className="text-sm text-muted-foreground">
-                        {selectedFile ? selectedFile.name : 'Upload File'}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => document.getElementById('pan-certificate')?.click()}
-                        type="button"
-                      >
-                        <Upload className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <Input
-                      id="pan-certificate"
-                      type="file"
-                      className="hidden"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={handleFileChange}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

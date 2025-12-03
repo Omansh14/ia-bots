@@ -1,5 +1,23 @@
+import { useState } from 'react';
 import ClientTable from '@/components/tables/client-table/client-table';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { CreateClientForm, type ClientFormData } from '@/components/forms/CreateClientForm';
+
 const Client = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleCreateClient = (data: ClientFormData) => {
+    console.log('Creating client with data:', data);
+    // TODO: Add your API call or state management logic here
+  };
+
   return (
     <div className="space-y-2">
       {/* Heading */}
@@ -10,7 +28,29 @@ const Client = () => {
             Manage your client relationships and track performance
           </p>
         </div>
+        <Button
+          variant="default"
+          className="hover:cursor-pointer"
+          onClick={() => setIsDialogOpen(true)}
+        >
+          <Plus className="w-10 h-10 text-white" />
+          Create Client
+        </Button>
       </div>
+
+      {/* Create Client Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className='font-bold'>Create Client</DialogTitle>
+          </DialogHeader>
+          <CreateClientForm
+            onClose={() => setIsDialogOpen(false)}
+            onSubmit={handleCreateClient}
+          />
+        </DialogContent>
+      </Dialog>
+
       {/*------------ Client Table ---------------------*/}
       <div className="w-full">
         <ClientTable />

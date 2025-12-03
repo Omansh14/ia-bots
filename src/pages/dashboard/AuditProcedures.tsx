@@ -40,7 +40,7 @@ export default function AuditProcedureLibrary() {
               </p>
             </div>
           </div>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => navigate('create-audit-procedure')}>
             Create Audit Procedure
           </Button>
         </div>

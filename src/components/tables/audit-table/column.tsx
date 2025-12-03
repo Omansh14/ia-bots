@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import moment, { type MomentInput } from 'moment';
 import type { AuditData } from '@/types/index.types';
 import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
@@ -7,10 +7,10 @@ import { useNavigate } from 'react-router-dom';
 
 const getStatusBadgeVariant = (status: AuditData['status']) => {
   switch (status) {
-    case 'Completed':
+    case 'Active':
       return 'success';
-    case 'In-Progress':
-      return 'default';
+    case 'Draft':
+      return 'warning';
     case 'Inactive':
       return 'destructive';
     default:
@@ -25,9 +25,10 @@ export const columns: ColumnDef<AuditData>[] = [
     cell: ({ row }) => {
       const navigate = useNavigate();
       return (
-        <span 
-        onClick={() => navigate (`${row.getValue('jobId')}`)}
-        className="font-medium text-primary underline underline-offset-2 hover:cursor-pointer">
+        <span
+          onClick={() => navigate(`${row.getValue('jobId')}`)}
+          className="font-medium text-primary underline underline-offset-2 hover:cursor-pointer"
+        >
           {row.getValue('jobId')}
         </span>
       );
@@ -42,10 +43,9 @@ export const columns: ColumnDef<AuditData>[] = [
     accessorKey: 'auditProcedures',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <span
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2 hover:bg-transparent w-full justify-center"
+          className="px-2 hover:bg-transparent max-w- flex"
         >
           Audit Procedures
           {column.getIsSorted() === 'asc' ? (
@@ -55,19 +55,21 @@ export const columns: ColumnDef<AuditData>[] = [
           ) : (
             <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
           )}
-        </Button>
+        </span>
       );
     },
-    cell: ({ row }) => <div className="text-center">{row.getValue('auditProcedures')}</div>,
+    cell: ({ row }) => {
+      const value = row.getValue('auditProcedures') as number;
+      return <div className="pl-14">{String(value).padStart(3, '0')}</div>;
+    },
   },
   {
     accessorKey: 'exceptions',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <div
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2 hover:bg-transparent w-full justify-center"
+          className="px-2 flex hover:bg-transparent w-full"
         >
           Exceptions
           {column.getIsSorted() === 'asc' ? (
@@ -77,67 +79,25 @@ export const columns: ColumnDef<AuditData>[] = [
           ) : (
             <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
           )}
-        </Button>
+        </div>
       );
     },
-    cell: ({ row }) => (
-      <div className="text-center">
-        <span className="font-semibold text-destructive">{row.getValue('exceptions')}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'startDate',
-    header: ({ column }) => {
+    cell: ({ row }) => {
+      const value = row.getValue('exceptions') as number;
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2 hover:bg-transparent w-full justify-center"
-        >
-          Start Date
-          {column.getIsSorted() === 'asc' ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === 'desc' ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-          )}
-        </Button>
+        <div className="pl-10">
+          <span className="font-semibold text-destructive">{String(value).padStart(3, '0')}</span>
+        </div>
       );
     },
-    cell: ({ row }) => <div className="text-center">{row.getValue('startDate')}</div>,
-  },
-  {
-    accessorKey: 'endDate',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2 hover:bg-transparent w-full justify-center"
-        >
-          End Date
-          {column.getIsSorted() === 'asc' ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === 'desc' ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-          )}
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="text-center">{row.getValue('endDate')}</div>,
   },
   {
     accessorKey: 'createdOn',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <div
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="h-8 px-2 hover:bg-transparent w-full justify-center"
+          className="flex hover:bg-transparent w-full"
         >
           Created On
           {column.getIsSorted() === 'asc' ? (
@@ -147,10 +107,36 @@ export const columns: ColumnDef<AuditData>[] = [
           ) : (
             <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
           )}
-        </Button>
+        </div>
       );
     },
-    cell: ({ row }) => <div className="text-center">{row.getValue('createdOn')}</div>,
+    cell: ({ row }) => {
+      const createdOn = row.getValue('createdOn') as MomentInput;
+      const formattedDate = createdOn ? moment(createdOn).format('lll') : '';
+
+      return <div>{formattedDate}</div>;
+    },
+  },
+  {
+    accessorKey: 'runtime',
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="flex hover:bg-transparent w-full"
+        >
+          Runtime
+          {column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+          )}
+        </div>
+      );
+    },
+    cell: ({ row }) => <div className="">{row.getValue('runtime')}</div>,
   },
   {
     accessorKey: 'status',
@@ -158,7 +144,7 @@ export const columns: ColumnDef<AuditData>[] = [
     cell: ({ row }) => {
       const status = row.getValue('status') as AuditData['status'];
       return (
-        <div className="flex justify-center">
+        <div className="flex">
           <Badge className="rounded-full" variant={getStatusBadgeVariant(status)}>
             {status}
           </Badge>

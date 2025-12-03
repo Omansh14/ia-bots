@@ -51,17 +51,23 @@ const DataFiltering = () => {
               Refine Your Data
             </TabsTrigger>
             <TabsTrigger
-              value="parameters"
+              value="current-parameters"
               className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:font-semibold"
             >
-              Set Parameters
+              Current Parameters
+            </TabsTrigger>
+            <TabsTrigger
+              value="default-parameters"
+              className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:font-semibold"
+            >
+              Default Parameters
             </TabsTrigger>
           </TabsList>
           <TabsContent value="refine" className="mt-4 ml-4">
             <RefineData fileNames={fileNames} />
           </TabsContent>
-          <TabsContent value="parameters" className="mt-4 ml-4">
-           <SetParameters />
+          <TabsContent value="current-parameters" className="mt-4 ml-4">
+            <SetParameters />
           </TabsContent>
         </Tabs>
       </CardContent>

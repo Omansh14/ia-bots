@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 
 const sampleList = [
@@ -55,7 +56,9 @@ const Section = ({
                 ) : sectionState.running ? (
                   <div className="text-sm text-blue-500 italic">Running...</div>
                 ) : (
-                  <div className="text-sm text-amber-500 italic">Waiting to run...</div>
+                  <div className="text-sm text-green-700 italic font-semibold">
+                    Ready to run: {items?.length}
+                  </div>
                 )}
                 <ChevronDown className="h-4 w-4" />
               </div>
@@ -111,11 +114,25 @@ const ProcedureReview = () => {
   const navigate = useNavigate();
 
   // Section states - derived from selected bots in sessionStorage.step1
-  const [sections, setSections] = useState<{
-    title: string;
-    items: string[];
-    state: SectionState;
-  }[]>([]);
+  const [sections, setSections] = useState<
+    {
+      title: string;
+      items: string[];
+      state: SectionState;
+    }[]
+  >([]);
+
+  // Error sections - same structure but for errors
+  const [errorSections, setErrorSections] = useState<
+    {
+      title: string;
+      items: string[];
+      state: SectionState;
+    }[]
+  >([]);
+
+  // Flag to track if there are any errors
+  const hasErrors = errorSections.length > 0;
 
   // On mount, read selected bots from sessionStorage and build sections grouped by category
   useEffect(() => {
@@ -154,12 +171,19 @@ const ProcedureReview = () => {
           {
             title: 'P2P Audit Procedures',
             items: sampleList,
-            state: { running: false, finished: false, itemStates: Array(sampleList.length).fill('idle') },
+            state: {
+              running: false,
+              finished: false,
+              itemStates: Array(sampleList.length).fill('idle'),
+            },
           },
         ]);
       } else {
         setSections(built);
       }
+
+      // Initialize error sections as empty (no errors initially)
+      setErrorSections([]);
     } catch (e) {
       // ignore parse errors
     }
@@ -230,9 +254,9 @@ const ProcedureReview = () => {
               <ArrowLeft className="h-6 w-6" />
             </Button>
             <div className="">
-              <h1 className="text-2xl font-bold">Processing Bots</h1>
+              <h1 className="text-2xl font-bold">Validate Your Workflow</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                This may take a moment while we run AI checks and validations
+                Validate Audit Procedures & Data Mapping
               </p>
             </div>
           </div>
@@ -241,7 +265,7 @@ const ProcedureReview = () => {
               variant="outline"
               size="lg"
               className="hover:cursor-pointer"
-              onClick={() => navigate('../data-filtering')}
+              onClick={() => navigate('../../data-filtering')}
             >
               Edit Parameters
             </Button>
@@ -251,26 +275,73 @@ const ProcedureReview = () => {
           </div>
         </div>
 
-        {sections.map((section) => (
-          <Section
-            key={section.title}
-            title={section.title}
-            items={section.items}
-            sectionState={section.state}
-          />
-        ))}
-
-        {allFinished && (
-          <div className="flex justify-center mt-8">
-            <Button
-              onClick={() => navigate('/generate-report')}
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow"
-              size="lg"
+        {/* Tabs for Ready to Run and Errors */}
+        <Tabs defaultValue="ready" className="w-full">
+          <TabsList className="bg-muted mb-4">
+            <TabsTrigger
+              value="ready"
+              className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold"
             >
-              Check Report
-            </Button>
-          </div>
-        )}
+              Ready to Run
+            </TabsTrigger>
+            <TabsTrigger
+              value="errors"
+              className="data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:font-semibold"
+            >
+              Errors
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Ready to Run Tab */}
+          <TabsContent value="ready">
+            {sections.map((section) => (
+              <Section
+                key={section.title}
+                title={section.title}
+                items={section.items}
+                sectionState={section.state}
+              />
+            ))}
+
+            {allFinished && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={() => navigate('/generate-report')}
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-lg shadow"
+                  size="lg"
+                >
+                  Check Report
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Errors Tab */}
+          <TabsContent value="errors">
+            {hasErrors ? (
+              <>
+                {errorSections.map((section) => (
+                  <Section
+                    key={section.title}
+                    title={section.title}
+                    items={section.items}
+                    sectionState={section.state}
+                  />
+                ))}
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 px-4">
+                <div className="bg-green-100 rounded-full p-4 mb-4">
+                  <CheckCircle2 className="h-12 w-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Errors Detected</h3>
+                <p className="text-sm text-muted-foreground text-center max-w-md">
+                  All audit procedures and data mappings have been validated successfully.
+                </p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </Card>
     </div>
   );

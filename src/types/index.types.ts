@@ -12,6 +12,7 @@ export type Client = {
   name: string;
   industry: string;
   timestamp: Date;
+  lastrun?: Date;
   audit_procedures: number;
   action: string[];
 };
@@ -53,8 +54,7 @@ export interface AuditData {
   location: string;
   auditProcedures: number;
   exceptions: number;
-  startDate: string;
-  endDate: string;
-  createdOn: string;
-  status: "In-Progress" | "Completed" | "Inactive";
+  runtime: string;
+  createdOn: Date;
+  status: "Active" | "Draft" | "Inactive";
 }

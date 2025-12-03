@@ -1,39 +1,7 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  ArrowLeft,
-  RotateCcw,
-  Search,
-  ArrowUpDown,
-  ChevronDown,
-  LayoutGrid,
-  Sparkle,
-  ChevronsUpDown,
-  Check,
-  Plus,
-  X,
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { bots } from '@/constants';
 import { useState, useEffect } from 'react';
 import {
   flexRender,
@@ -48,9 +16,32 @@ import {
   type VisibilityState,
   type RowSelectionState,
 } from '@tanstack/react-table';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from '@/components/ui/select';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/components/ui/hover-card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { ArrowLeft, RotateCcw, Search, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { bots } from '@/constants';
+import ReactSelect from 'react-select';
 
-// Note: bots come from shared constants/types and are used as-is. Local detailed Bot type removed to avoid conflicts.
+// Option type for react-select
+interface OptionType {
+  value: string;
+  label: string;
+}
 
 const Step1 = () => {
   const navigate = useNavigate();
@@ -59,12 +50,6 @@ const Step1 = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [globalFilter, setGlobalFilter] = useState('');
-  const [companyOpen, setCompanyOpen] = useState(false);
-  const [companySearchValue, setCompanySearchValue] = useState('');
-
-  function cn(...classes: (string | boolean | undefined)[]) {
-    return classes.filter(Boolean).join(' ');
-  }
 
   const columns: ColumnDef<any>[] = [
     {
@@ -101,6 +86,13 @@ const Step1 = () => {
         );
       },
       cell: ({ row }) => <div className="font-medium pl-4">{row.getValue('category')}</div>,
+      filterFn: (row, columnId, filterValue) => {
+        if (Array.isArray(filterValue) && filterValue.length > 0) {
+          const rowValue = row.getValue(columnId) as string;
+          return filterValue.includes(rowValue);
+        }
+        return true;
+      },
     },
     {
       accessorKey: 'auditProcedure',
@@ -127,7 +119,7 @@ const Step1 = () => {
           <HoverCard>
             <HoverCardTrigger asChild>
               <div
-                className="text-muted-foreground max-w-4xl truncate hover:cursor-progress"
+                className="text-muted-foreground lg:max-w-2xl truncate hover:cursor-progress"
                 aria-label={desc}
               >
                 {desc}
@@ -140,13 +132,6 @@ const Step1 = () => {
         );
       },
     },
-    // {
-    //   accessorKey: 'documentForEvidence',
-    //   header: 'Document for Evidence',
-    //   cell: ({ row }) => (
-    //     <div className="text-muted-foreground">{row.getValue('documentForEvidence')}</div>
-    //   ),
-    // },
   ];
 
   const table = useReactTable({
@@ -173,42 +158,49 @@ const Step1 = () => {
         pageSize: 10,
       },
     },
-    getRowId: (row) => row.id, // Use bot id as row id for selection
+    getRowId: (row) => row.id,
   });
 
   const handleReset = () => {
-    // Clear local state
     setRowSelection({});
     setGlobalFilter('');
     setSorting([]);
     setColumnFilters([]);
+    setCompanyFilter([]);
+    setLocationFilter([]);
+    setPeriodFilter([]);
+    setFYearFilter([]);
+    setIndustryFilter([]);
+    setCategoryFilterValue([]);
 
-    // Also clear table internal filters/state so Selects and table reflect reset immediately
     try {
       table.setRowSelection?.({});
       table.setGlobalFilter?.('');
       table.setSorting?.([]);
       table.setColumnFilters?.([]);
     } catch (e) {
-      // silent - in case methods are not available in some environments
+      // silent
     }
   };
 
   const selectedCount = Object.keys(rowSelection).length;
-
-  // derive unique companies and locations from bots
-  // const companies = [...new Set(bots.map((b) => b.company))];
-  // Add some top Indian cities as dummy locations to ensure the select has common values
-  const indianCities = ['Mumbai','Delhi','Bangalore','Chennai','Kolkata','Hyderabad','Pune','Ahmedabad','Surat','Jaipur'];
+  const indianCities = [
+    'Mumbai',
+    'Delhi',
+    'Bangalore',
+    'Chennai',
+    'Kolkata',
+    'Hyderabad',
+    'Pune',
+    'Ahmedabad',
+    'Surat',
+    'Jaipur',
+  ];
 
   const locations = Array.from(
     new Set([...(bots as any).map((b: any) => b.location).filter(Boolean), ...indianCities]),
   );
-
-  // Add common period options (merge with any periods present on bots)
   const periodOptions = ['Annually', 'Semi-Annually', 'Q1', 'Q2', 'Q3', 'Q4'];
-
-  // Financial year and industry options
   const fYearOptions = ['2024-25', '2023-24', '2022-23'];
   const industryOptions = [
     'Financial Services',
@@ -220,34 +212,54 @@ const Step1 = () => {
     'Education',
   ];
 
-  const initialCompanies = ['Acme Corp', 'TechStart Inc', 'Global Industries', 'Innovation Labs', 'Tata Motors', 'Tech Innovators', 'Global Foods', 'EcoBuild', 'Finserve Solutions', 'Greenwave Energy', 'Apex Pharmaceuticals'];
+  const initialCompanies = [
+    'Acme Corp',
+    'TechStart Inc',
+    'Global Industries',
+    'Innovation Labs',
+    'Tata Motors',
+    'Tech Innovators',
+    'Global Foods',
+    'EcoBuild',
+    'Finserve Solutions',
+    'Greenwave Energy',
+    'Apex Pharmaceuticals',
+  ];
 
   const [companyList, setCompanyList] = useState<string[]>(initialCompanies);
-  const [companyFilter, setCompanyFilter] = useState('');
-  const [locationFilter, setLocationFilter] = useState('');
-  const [periodFilter, setPeriodFilter] = useState('');
-  const [fYearFilter, setFYearFilter] = useState('');
-  const [industryFilter, setIndustryFilter] = useState('');
+  const [companyFilter, setCompanyFilter] = useState<OptionType[]>([]);
+  const [locationFilter, setLocationFilter] = useState<OptionType[]>([]);
+  const [periodFilter, setPeriodFilter] = useState<OptionType[]>([]);
+  const [fYearFilter, setFYearFilter] = useState<OptionType[]>([]);
+  const [industryFilter, setIndustryFilter] = useState<OptionType[]>([]);
+  const [categoryFilterValue, setCategoryFilterValue] = useState<OptionType[]>([]);
 
-  const selectedIndustry = industryFilter || 'All';
-  const [categoryFilterValue, setCategoryFilterValue] = useState('all');
-
-  // Load saved state from sessionStorage (if any) on mount
+  // Load saved state from sessionStorage
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem('step1');
       if (!raw) return;
       const data = JSON.parse(raw || '{}');
-      if (data.selected_company) setCompanyFilter(data.selected_company);
-      if (data.selected_location) setLocationFilter(data.selected_location);
-      if (data.selected_period) setPeriodFilter(data.selected_period);
-      if (data.selected_financial_year) setFYearFilter(data.selected_financial_year);
-      if (data.selected_industry) setIndustryFilter(data.selected_industry);
+      
+      if (Array.isArray(data.selected_company)) {
+        setCompanyFilter(data.selected_company.map((c: string) => ({ value: c, label: c })));
+      }
+      if (Array.isArray(data.selected_location)) {
+        setLocationFilter(data.selected_location.map((l: string) => ({ value: l, label: l })));
+      }
+      if (Array.isArray(data.selected_period)) {
+        setPeriodFilter(data.selected_period.map((p: string) => ({ value: p, label: p })));
+      }
+      if (Array.isArray(data.selected_financial_year)) {
+        setFYearFilter(data.selected_financial_year.map((y: string) => ({ value: y, label: y })));
+      }
+      if (Array.isArray(data.selected_industry)) {
+        setIndustryFilter(data.selected_industry.map((i: string) => ({ value: i, label: i })));
+      }
       if (Array.isArray(data.company_list) && data.company_list.length > 0) {
         setCompanyList((prev) => Array.from(new Set([...prev, ...data.company_list])));
       }
 
-      // Restore selected bots by matching stored bot ids to rows (stored bots are full objects)
       if (Array.isArray(data.selected_bots) && data.selected_bots.length > 0) {
         const selection: RowSelectionState = {};
         const storedIds = data.selected_bots.map((b: any) => b?.id).filter(Boolean);
@@ -265,52 +277,97 @@ const Step1 = () => {
         }
       }
     } catch (e) {
-      // ignore JSON parse errors
+      // ignore
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist step1 data to localStorage whenever relevant state changes
+  // Persist step1 data to sessionStorage
   useEffect(() => {
     try {
-      const selectedBotsObjects = table.getRowModel().rows
-        .filter((r) => Boolean(rowSelection[r.id]))
-        .map((r) => (r.original as any));
+      const selectedBotsObjects = table
+        .getRowModel()
+        .rows.filter((r) => Boolean(rowSelection[r.id]))
+        .map((r) => r.original as any);
 
       const payload = {
-        selected_company: companyFilter || null,
-        selected_location: locationFilter || null,
-        selected_period: periodFilter || null,
-        selected_financial_year: fYearFilter || null,
-        selected_industry: industryFilter || null,
-        // store full bot objects for selected bots
+        selected_company: companyFilter.map((opt) => opt.value),
+        selected_location: locationFilter.map((opt) => opt.value),
+        selected_period: periodFilter.map((opt) => opt.value),
+        selected_financial_year: fYearFilter.map((opt) => opt.value),
+        selected_industry: industryFilter.map((opt) => opt.value),
         selected_bots: selectedBotsObjects,
         company_list: companyList,
       };
 
       sessionStorage.setItem('step1', JSON.stringify(payload));
     } catch (e) {
-      // ignore storage errors
+      // ignore
     }
-  }, [companyFilter, locationFilter, periodFilter, fYearFilter, industryFilter, rowSelection, companyList, table]);
+  }, [
+    companyFilter,
+    locationFilter,
+    periodFilter,
+    fYearFilter,
+    industryFilter,
+    rowSelection,
+    companyList,
+    table,
+  ]);
 
-  const handleAddCompany = () => {
-    const trimmedValue = companySearchValue.trim();
-    if (trimmedValue && !companyList.includes(trimmedValue)) {
-      setCompanyList([...companyList, trimmedValue]);
-      setCompanyFilter(trimmedValue);
-      setCompanySearchValue('');
-      setCompanyOpen(false);
-    }
+  // Transform to react-select options
+  const companyOptions: OptionType[] = companyList.map((c) => ({ value: c, label: c }));
+  const locationOptions: OptionType[] = locations.map((loc) => ({ value: loc, label: loc }));
+  const periodOptions_rs: OptionType[] = [
+    ...new Set([...(bots as any).map((bot: any) => bot.period).filter(Boolean), ...periodOptions]),
+  ].map((period: any) => ({ value: period, label: period }));
+  const fYearOptions_rs: OptionType[] = [
+    ...new Set([...(bots as any).map((bot: any) => bot.fYear).filter(Boolean), ...fYearOptions]),
+  ].map((year: any) => ({ value: year, label: year }));
+  const industryOptions_rs: OptionType[] = [
+    ...new Set([
+      ...(bots as any).map((bot: any) => bot.industry).filter(Boolean),
+      ...industryOptions,
+    ]),
+  ].map((industry: any) => ({ value: industry, label: industry }));
+  const categoryOptions_rs: OptionType[] = [
+    { value: 'P2P', label: 'P2P' },
+    { value: 'H2R', label: 'H2R' },
+    { value: 'O2C', label: 'O2C' },
+  ];
+
+  // Custom styles for react-select
+  const customStyles = {
+    control: (provided: any) => ({
+      ...provided,
+      minHeight: '40px',
+      borderRadius: '0.5rem',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      borderRadius: '0.5rem',
+      zIndex: 50,
+    }),
+    multiValue: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'hsl(var(--secondary))',
+      borderRadius: '0.25rem',
+    }),
+    multiValueLabel: (provided: any) => ({
+      ...provided,
+      color: 'hsl(var(--secondary-foreground))',
+      fontSize: '0.875rem',
+    }),
+    multiValueRemove: (provided: any) => ({
+      ...provided,
+      color: 'hsl(var(--secondary-foreground))',
+      '&:hover': {
+        backgroundColor: 'hsl(var(--destructive))',
+        color: 'hsl(var(--destructive-foreground))',
+      },
+    }),
   };
 
-  const showAddOption =
-    companySearchValue.trim() !== '' &&
-    !companyList.some((c) => c.toLowerCase() === companySearchValue.trim().toLowerCase());
-
-  const filteredCompanies = companyList.filter((company) =>
-    company.toLowerCase().includes(companySearchValue.toLowerCase()),
-  );
   return (
     <div className="mx-auto w-full py-4 sm:pr-2 lg:pr-4">
       <div className="mb-4 flex items-center justify-between">
@@ -319,7 +376,7 @@ const Step1 = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Create Client</h1>
+            <h1 className="text-2xl font-bold text-foreground">Client Details</h1>
             <p className="text-sm text-muted-foreground">
               Add client details and handpick the bots that will drive your automation
             </p>
@@ -335,221 +392,89 @@ const Step1 = () => {
         <h2 className="mb-4 text-lg font-semibold text-card-foreground">Basic Details</h2>
         <div className="flex gap-4 flex-1 w-full">
           <div className="space-y-2 w-full">
-            <Label htmlFor="company" className="text-sm font-medium">
+            <Label htmlFor="company">
               Company
             </Label>
-            <Popover open={companyOpen} onOpenChange={setCompanyOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={companyOpen}
-                  className="w-full justify-between bg-white hover:bg-gray-50"
-                >
-                  <span className={cn(!companyFilter && 'text-gray-500')}>
-                    {companyFilter || 'Select company'}
-                  </span>
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
-                <div className="flex flex-col">
-                  {/* Search Input */}
-                  <div className="flex items-center border-b px-3">
-                    <Input
-                      placeholder="Search or add company..."
-                      value={companySearchValue}
-                      onChange={(e) => setCompanySearchValue(e.target.value)}
-                      className="h-10 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && showAddOption) {
-                          handleAddCompany();
-                        }
-                      }}
-                    />
-                    {companySearchValue && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0"
-                        onClick={() => setCompanySearchValue('')}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Options List */}
-                  <div className="max-h-[300px] overflow-y-auto">
-                    {filteredCompanies.length === 0 && !showAddOption && (
-                      <div className="px-3 py-6 text-center text-sm text-gray-500">
-                        No company found.
-                      </div>
-                    )}
-
-                    {filteredCompanies.map((company) => (
-                      <button
-                        key={company}
-                        onClick={() => {
-                          setCompanyFilter(company === companyFilter ? '' : company);
-                          setCompanyOpen(false);
-                          setCompanySearchValue('');
-                        }}
-                        className="w-full flex items-center px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            companyFilter === company ? 'opacity-100' : 'opacity-0',
-                          )}
-                        />
-                        {company}
-                      </button>
-                    ))}
-
-                    {showAddOption && (
-                      <button
-                        onClick={handleAddCompany}
-                        className="w-full flex items-center px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 cursor-pointer border-t"
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add "{companySearchValue}"
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <ReactSelect
+              isMulti
+              options={companyOptions}
+              value={companyFilter}
+              onChange={(selected) => {
+                setCompanyFilter(selected as OptionType[]);
+              }}
+              placeholder="Select company"
+              styles={customStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="location" className="mb-3">
-              Location
-            </Label>
-            <Select value={locationFilter} onValueChange={(value) => setLocationFilter(value)}>
-              <SelectTrigger id="location" className="bg-background w-full">
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                {locations.map((l) => (
-                  <SelectItem key={l} value={l}>
-                    {l}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="location">Location</Label>
+            <ReactSelect
+              isMulti
+              options={locationOptions}
+              value={locationFilter}
+              onChange={(selected) => setLocationFilter(selected as OptionType[])}
+              placeholder="Select location"
+              styles={customStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="period" className="mb-3">
-              Period
-            </Label>
-            <Select value={periodFilter} onValueChange={(value) => setPeriodFilter(value)}>
-              <SelectTrigger id="period" className="bg-background w-full">
-                <SelectValue placeholder="Period" />
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                {[...new Set([...(bots as any).map((bot: any) => bot.period).filter(Boolean), ...periodOptions])].map((period: any) => (
-                  <SelectItem key={period} value={period}>
-                    {period}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="period">Period</Label>
+            <ReactSelect
+              isMulti
+              options={periodOptions_rs}
+              value={periodFilter}
+              onChange={(selected) => setPeriodFilter(selected as OptionType[])}
+              placeholder="Select period"
+              styles={customStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="financial-year" className="mb-3">
-              Financial Year
-            </Label>
-            <Select value={fYearFilter} onValueChange={(value) => setFYearFilter(value)}>
-              <SelectTrigger id="financial-year" className="bg-background w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                {[...new Set([...(bots as any).map((bot: any) => bot.fYear).filter(Boolean), ...fYearOptions])].map((year: any) => (
-                  <SelectItem key={year} value={year}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="financial-year">Financial Year</Label>
+            <ReactSelect
+              isMulti
+              options={fYearOptions_rs}
+              value={fYearFilter}
+              onChange={(selected) => setFYearFilter(selected as OptionType[])}
+              placeholder="Select financial year"
+              styles={customStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
           <div className="space-y-2 w-full">
-            <Label htmlFor="industry" className="mb-3">
-              Industry
-            </Label>
-            <Select value={industryFilter} onValueChange={(value) => setIndustryFilter(value)}>
-              <SelectTrigger id="industry" className="bg-background w-full">
-                <SelectValue placeholder="Industry" />
-              </SelectTrigger>
-              <SelectContent className="w-full">
-                {[...new Set([...(bots as any).map((bot: any) => bot.industry).filter(Boolean), ...industryOptions])].map((industry: any) => (
-                  <SelectItem key={industry} value={industry}>
-                    {industry}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="industry">Industry</Label>
+            <ReactSelect
+              isMulti
+              options={industryOptions_rs}
+              value={industryFilter}
+              onChange={(selected) => setIndustryFilter(selected as OptionType[])}
+              placeholder="Select industry"
+              styles={customStyles}
+              className="react-select-container"
+              classNamePrefix="react-select"
+            />
           </div>
         </div>
       </div>
 
       {/* Select Bots Section */}
       <div className="rounded-lg border bg-card p-6">
-        <h2 className="mb-6 text-lg font-semibold text-card-foreground">Select Bots</h2>
-
-        {/* Category Badge and Actions */}
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {selectedIndustry && selectedIndustry !== 'All' ? (
-              <Badge variant="outline" className="gap-2 px-3 py-1.5">
-                <Sparkle className="h-4 w-4 fill-purple-300" />
-                <span className="font-medium">{selectedIndustry}</span>
-              </Badge>
-            ) : null}
-            <span className="text-sm text-muted-foreground">
-              Selected <span className="font-medium text-primary">{selectedCount}</span>/
-              {bots.length} bots
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <Select
-                value={categoryFilterValue}
-                onValueChange={(value) => {
-                  setCategoryFilterValue(value);
-                  try {
-                    const col = table.getColumn('category');
-                    if (col) {
-                      // treat 'all' as clear
-                      col.setFilterValue(value === 'all' ? undefined : value);
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-                }}
-              >
-                <SelectTrigger className="h-8 w-40 bg-background">
-                  <LayoutGrid className="mr-1 h-4 w-4 text-gray-700" />
-                  <SelectValue placeholder="Category" />
-                  
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="P2P">P2P</SelectItem>
-                  <SelectItem value="H2R">H2R</SelectItem>
-                  <SelectItem value="O2C">O2C</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button variant="outline" size="sm" onClick={handleReset}>
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset
-            </Button>
-          </div>
+        <div className="flex justify-between">
+          <h2 className="mb-6 text-lg font-semibold text-card-foreground">Select Procedures</h2>
+          <span className="text-sm text-muted-foreground">
+            <span className="font-medium text-primary">{selectedCount}</span>/{bots.length} selected
+          </span>
         </div>
 
         {/* Search */}
-        <div className="mb-6">
-          <div className="relative">
+        <div className="mb-6 flex gap-4 w-full items-center px-2">
+          <div className="relative w-4/5">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search all columns..."
@@ -557,6 +482,40 @@ const Step1 = () => {
               onChange={(e) => setGlobalFilter(e.target.value)}
               className="bg-background pl-9"
             />
+          </div>
+          {/* Category Filter and Reset */}
+          <div className="w-1/5 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:block w-32">
+                <ReactSelect
+                  isMulti
+                  options={categoryOptions_rs}
+                  value={categoryFilterValue}
+                  onChange={(selected) => {
+                    const values = selected as OptionType[];
+                    setCategoryFilterValue(values);
+                    try {
+                      const col = table.getColumn('category');
+                      if (col) {
+                        col.setFilterValue(
+                          values.length > 0 ? values.map((v) => v.value) : undefined
+                        );
+                      }
+                    } catch (e) {
+                      // ignore
+                    }
+                  }}
+                  placeholder="Category"
+                  styles={customStyles}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                />
+              </div>
+              <Button variant="outline" size="sm" onClick={handleReset}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -602,8 +561,21 @@ const Step1 = () => {
 
         {/* Pagination */}
         <div className="flex items-center justify-between px-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {selectedCount} of {table.getFilteredRowModel().rows.length} row(s) selected.
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
           </div>
           <div className="flex items-center space-x-6 lg:space-x-8">
             <div className="flex items-center space-x-2">

@@ -2,17 +2,14 @@ import { useState } from 'react';
 import { AuditSidebar } from '@/components/sidebar/AuditSideBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { SummaryTab } from '@/components/tabs/outputTabs/SummaryTab';
 import { OutputTab } from '@/components/tabs/outputTabs/OutputTab';
 import { ReportTab } from '@/components/tabs/outputTabs/ReportTab';
 import { Card } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
 
 const Output = () => {
-  const [selectedItem, setSelectedItem] = useState('Summary (P2P)');
+  const [selectedItem, setSelectedItem] = useState('Summary');
   const [activeTab, setActiveTab] = useState('output');
-  const navigate = useNavigate();
 
   // Check if selected item is a summary
   const isSummary = selectedItem.toLowerCase().includes('summary');
@@ -41,15 +38,6 @@ const Output = () => {
                   </h1>
                 </div>
                 <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="gap-2 hover:cursor-pointer"
-                    onClick={() => navigate('/')}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                    Return to Dashboard
-                  </Button>
                   <Button
                     size="lg"
                     className="text-primary bg-primary/10 hover:bg-primary/20 hover:cursor-pointer"

@@ -52,7 +52,8 @@ export type AuditProcedure = {
 export interface AuditData {
   jobId: string;
   location: string;
-  auditProcedures: number;
+  approvedProcedures: number;
+  totalProcedures: number;
   exceptions: number;
   runtime: string;
   createdOn: Date;

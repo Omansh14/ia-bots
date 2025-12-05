@@ -405,7 +405,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '10102025-001',
     location: 'Mumbai',
-    auditProcedures: 112,
+    approvedProcedures: 80,
+    totalProcedures: 112,
     exceptions: 167,
     runtime: '30 seconds',
     createdOn: new Date('2024-10-01T10:20:30Z'),
@@ -414,7 +415,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-004',
     location: 'Bengaluru',
-    auditProcedures: 187,
+    approvedProcedures: 131,
+    totalProcedures: 187,
     exceptions: 213,
     runtime: '45 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -423,7 +425,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-008',
     location: 'Chennai',
-    auditProcedures: 145,
+    approvedProcedures: 104,
+    totalProcedures: 145,
     exceptions: 154,
     runtime: '25 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -432,7 +435,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-007',
     location: 'Kolkata',
-    auditProcedures: 163,
+    approvedProcedures: 114,
+    totalProcedures: 163,
     exceptions: 189,
     runtime: '40 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -441,7 +445,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-006',
     location: 'Hyderabad',
-    auditProcedures: 152,
+    approvedProcedures: 106,
+    totalProcedures: 152,
     exceptions: 172,
     runtime: '35 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -450,7 +455,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-003',
     location: 'Pune',
-    auditProcedures: 198,
+    approvedProcedures: 139,
+    totalProcedures: 198,
     exceptions: 234,
     runtime: '50 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -459,7 +465,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-002',
     location: 'Ahmedabad',
-    auditProcedures: 105,
+    approvedProcedures: 73,
+    totalProcedures: 105,
     exceptions: 87,
     runtime: '20 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
@@ -468,7 +475,8 @@ export const auditData: AuditData[] = [
   {
     jobId: '20240315-008',
     location: 'Surat',
-    auditProcedures: 176,
+    approvedProcedures: 123,
+    totalProcedures: 176,
     exceptions: 195,
     runtime: '42 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),

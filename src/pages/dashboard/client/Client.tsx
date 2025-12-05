@@ -26,11 +26,11 @@ const Client = () => {
         <div className="flex gap-3">
           {/* Archived Client */}
           <Button
-            variant="default"
+            variant="outline"
             className="hover:cursor-pointer"
             // onClick={() => setIsDialogOpen(true)}
           >
-            <Archive className="w-10 h-10 text-white" />
+            <Archive className="w-10 h-10" />
             Archive Clients
           </Button>
           <Button

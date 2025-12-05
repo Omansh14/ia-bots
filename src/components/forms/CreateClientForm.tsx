@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -10,11 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Badge } from '../ui/badge';
 
 interface CreateClientFormProps {
   onClose: () => void;
   onSubmit?: (data: ClientFormData) => void;
-  type?:'edit' | 'create';
+  type?: 'edit' | 'create';
 }
 
 export interface ClientFormData {
@@ -156,12 +156,11 @@ export const CreateClientForm = ({ onClose, onSubmit, type }: CreateClientFormPr
           Location
         </Label>
         <div
-          className="min-h-[64px] w-full rounded-md flex flex-wrap gap-2 items-center"
+          className="w-full rounded-md flex flex-wrap gap-2 items-center"
           onClick={() => inputRef.current?.focus()}
         >
           <div className="flex-1 w-full">
-            <Textarea
-              ref={inputRef}
+            <Input
               value={locationInput}
               onChange={(e) => setLocationInput(e.target.value)}
               onKeyDown={(e) => {
@@ -177,8 +176,9 @@ export const CreateClientForm = ({ onClose, onSubmit, type }: CreateClientFormPr
         </div>
         <p className="text-xs text-muted-foreground">Press Enter or comma to add a location.</p>
         {formData.location.map((loc, idx) => (
-          <span
+          <Badge
             key={`${loc}-${idx}`}
+            variant="default"
             className="inline-flex items-center gap-2 px-2 py-0.5 rounded-md bg-muted text-sm"
           >
             <span className="max-w-xs truncate">{loc}</span>
@@ -190,7 +190,7 @@ export const CreateClientForm = ({ onClose, onSubmit, type }: CreateClientFormPr
             >
               ×
             </button>
-          </span>
+          </Badge>
         ))}
       </div>
 
@@ -215,7 +215,7 @@ export const CreateClientForm = ({ onClose, onSubmit, type }: CreateClientFormPr
 
       <div className="space-y-2">
         <Label htmlFor="set-parameters" className="text-sm font-medium">
-          Set Parameters
+          {type === 'edit' ? 'Edit': 'Set'} Parameters
         </Label>
         <Select value={formData.paramters} onValueChange={handleSelectChange}>
           <SelectTrigger id="set-parameters" className="w-full">

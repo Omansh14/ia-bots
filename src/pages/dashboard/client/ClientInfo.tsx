@@ -87,17 +87,18 @@ const ClientInfo = () => {
     }),
     multiValue: (provided: any) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--secondary))',
+      backgroundColor: 'lightblue',
+      border: '1px solid blue',
       borderRadius: '0.25rem',
     }),
     multiValueLabel: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--secondary-foreground))',
+      color: 'blue',
       fontSize: '0.875rem',
     }),
     multiValueRemove: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--secondary-foreground))',
+      color: 'red',
       borderRadius: '0 0.25rem 0.25rem 0',
       '&:hover': {
         backgroundColor: 'hsl(var(--destructive))',

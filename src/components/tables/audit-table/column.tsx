@@ -40,14 +40,14 @@ export const columns: ColumnDef<AuditData>[] = [
     cell: ({ row }) => <div>{row.getValue('location')}</div>,
   },
   {
-    accessorKey: 'auditProcedures',
+    accessorKey: 'totalProcedures',
     header: ({ column }) => {
       return (
         <span
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="px-2 hover:bg-transparent max-w- flex"
         >
-          Audit Procedures
+          Procedures
           {column.getIsSorted() === 'asc' ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === 'desc' ? (
@@ -59,8 +59,14 @@ export const columns: ColumnDef<AuditData>[] = [
       );
     },
     cell: ({ row }) => {
-      const value = row.getValue('auditProcedures') as number;
-      return <div className="pl-14">{String(value).padStart(3, '0')}</div>;
+      const totalvalue = row.original.totalProcedures;
+      const approvedProcedures = row.original.approvedProcedures;
+      return (
+        <div className="pl-8">
+          <span className="">{approvedProcedures}/</span>
+          <span className="">{totalvalue}</span>
+        </div>
+      );
     },
   },
   // {

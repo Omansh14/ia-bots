@@ -32,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowLeft, RotateCcw, Search, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Search, ArrowUpDown, ChevronDown, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { bots } from '@/constants';
 import ReactSelect from 'react-select';
@@ -240,7 +240,7 @@ const Step1 = () => {
       const raw = sessionStorage.getItem('step1');
       if (!raw) return;
       const data = JSON.parse(raw || '{}');
-      
+
       if (Array.isArray(data.selected_company)) {
         setCompanyFilter(data.selected_company.map((c: string) => ({ value: c, label: c })));
       }
@@ -350,21 +350,43 @@ const Step1 = () => {
     }),
     multiValue: (provided: any) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--secondary))',
+      backgroundColor: 'lightblue',
+      border: 'blue 1px solid',
       borderRadius: '0.25rem',
     }),
     multiValueLabel: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--secondary-foreground))',
+      color: 'blue',
       fontSize: '0.875rem',
     }),
     multiValueRemove: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--secondary-foreground))',
+      color: 'red',
       '&:hover': {
         backgroundColor: 'hsl(var(--destructive))',
         color: 'hsl(var(--destructive-foreground))',
       },
+    }),
+  };
+
+  const customStylesForResizable = {
+    container: (provided: any) => ({
+      ...provided,
+      width: 'auto', // let the container size to content
+      minWidth: 120, // smallest width when empty
+      maxWidth: '60vw', // optional cap to avoid overflow; tweak as needed
+      borderRadius: '0.5rem',
+    }),
+    control: (provided: any) => ({
+      ...provided,
+      minWidth: 120, // control shouldn't collapse smaller than this
+      boxSizing: 'border-box',
+      borderRadius: '0.5rem',
+    }),
+    valueContainer: (provided: any) => ({
+      ...provided,
+      padding: '4px 8px',
+      borderRadius: '0.5rem',
     }),
   };
 
@@ -382,9 +404,23 @@ const Step1 = () => {
             </p>
           </div>
         </div>
-        <Button size="lg" className="hover:cursor-pointer" onClick={() => navigate('upload-data')}>
-          Save & Next
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            size="lg"
+            variant='outline'
+            className="hover:cursor-pointer"
+          >
+            <Clock className="mr-2 h-5 w-5 bg-amber-300 rounded-full text-white" />
+            Last Run Procedures
+          </Button>
+          <Button
+            size="lg"
+            className="hover:cursor-pointer"
+            onClick={() => navigate('upload-data')}
+          >
+            Save & Next
+          </Button>
+        </div>
       </div>
 
       {/* Basic Details Section */}
@@ -392,9 +428,7 @@ const Step1 = () => {
         <h2 className="mb-4 text-lg font-semibold text-card-foreground">Basic Details</h2>
         <div className="flex gap-4 flex-1 w-full">
           <div className="space-y-2 w-full">
-            <Label htmlFor="company">
-              Company
-            </Label>
+            <Label htmlFor="company">Company</Label>
             <ReactSelect
               isMulti
               options={companyOptions}
@@ -474,48 +508,44 @@ const Step1 = () => {
 
         {/* Search */}
         <div className="mb-6 flex gap-4 w-full items-center px-2">
-          <div className="relative w-4/5">
+          {/* Search Bar → takes remaining space and can shrink */}
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search all columns..."
               value={globalFilter ?? ''}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="bg-background pl-9"
+              className="bg-background pl-9 h-12 w-full" // w-full important
             />
           </div>
-          {/* Category Filter and Reset */}
-          <div className="w-1/5 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="hidden sm:block w-32">
-                <ReactSelect
-                  isMulti
-                  options={categoryOptions_rs}
-                  value={categoryFilterValue}
-                  onChange={(selected) => {
-                    const values = selected as OptionType[];
-                    setCategoryFilterValue(values);
-                    try {
-                      const col = table.getColumn('category');
-                      if (col) {
-                        col.setFilterValue(
-                          values.length > 0 ? values.map((v) => v.value) : undefined
-                        );
-                      }
-                    } catch (e) {
-                      // ignore
-                    }
-                  }}
-                  placeholder="Category"
-                  styles={customStyles}
-                  className="react-select-container"
-                  classNamePrefix="react-select"
-                />
-              </div>
-              <Button variant="outline" size="sm" onClick={handleReset}>
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Reset
-              </Button>
+
+          {/* Multi-select + Reset → intrinsic width, grows with content */}
+          <div className="flex items-center gap-4 w-auto">
+            {/* make wrapper w-auto so react-select measures its content */}
+            <div className="hidden sm:block w-auto">
+              <ReactSelect
+                isMulti
+                options={categoryOptions_rs}
+                value={categoryFilterValue}
+                onChange={(selected) => {
+                  const values = selected as OptionType[];
+                  setCategoryFilterValue(values);
+                  try {
+                    const col = table.getColumn('category');
+                    col?.setFilterValue(values.length > 0 ? values.map((v) => v.value) : undefined);
+                  } catch {}
+                }}
+                placeholder="Category"
+                styles={{ ...customStyles, ...customStylesForResizable }} // merge with your other styles
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
             </div>
+
+            <Button variant="outline" size="lg" onClick={handleReset} className="border-gray-300">
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset
+            </Button>
           </div>
         </div>
 

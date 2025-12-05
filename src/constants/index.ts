@@ -409,7 +409,7 @@ export const auditData: AuditData[] = [
     exceptions: 167,
     runtime: '30 seconds',
     createdOn: new Date('2024-10-01T10:20:30Z'),
-    status: 'Active',
+    status: 'Completed',
   },
   {
     jobId: '20240315-004',
@@ -427,7 +427,7 @@ export const auditData: AuditData[] = [
     exceptions: 154,
     runtime: '25 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
-    status: 'Active',
+    status: 'Completed',
   },
   {
     jobId: '20240315-007',
@@ -436,7 +436,7 @@ export const auditData: AuditData[] = [
     exceptions: 189,
     runtime: '40 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
-    status: 'Active',
+    status: 'In Progress',
   },
   {
     jobId: '20240315-006',
@@ -445,7 +445,7 @@ export const auditData: AuditData[] = [
     exceptions: 172,
     runtime: '35 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
-    status: 'Inactive',
+    status: 'Failed',
   },
   {
     jobId: '20240315-003',
@@ -454,7 +454,7 @@ export const auditData: AuditData[] = [
     exceptions: 234,
     runtime: '50 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
-    status: 'Inactive',
+    status: 'Completed',
   },
   {
     jobId: '20240315-002',
@@ -472,7 +472,7 @@ export const auditData: AuditData[] = [
     exceptions: 195,
     runtime: '42 seconds',
     createdOn:  new Date('2024-10-01T10:20:30Z'),
-    status: 'Active',
+    status: 'Failed',
   },
 ];
 

@@ -7,14 +7,14 @@ import { useNavigate } from 'react-router-dom';
 
 const getStatusBadgeVariant = (status: AuditData['status']) => {
   switch (status) {
-    case 'Active':
+    case 'Completed':
       return 'success';
     case 'Draft':
       return 'warning';
-    case 'Inactive':
+    case 'Failed':
       return 'destructive';
     default:
-      return 'secondary';
+      return 'default';
   }
 };
 
@@ -63,34 +63,34 @@ export const columns: ColumnDef<AuditData>[] = [
       return <div className="pl-14">{String(value).padStart(3, '0')}</div>;
     },
   },
-  {
-    accessorKey: 'exceptions',
-    header: ({ column }) => {
-      return (
-        <div
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="px-2 flex hover:bg-transparent w-full"
-        >
-          Exceptions
-          {column.getIsSorted() === 'asc' ? (
-            <ArrowUp className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === 'desc' ? (
-            <ArrowDown className="ml-2 h-4 w-4" />
-          ) : (
-            <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
-          )}
-        </div>
-      );
-    },
-    cell: ({ row }) => {
-      const value = row.getValue('exceptions') as number;
-      return (
-        <div className="pl-10">
-          <span className="font-semibold text-destructive">{String(value).padStart(3, '0')}</span>
-        </div>
-      );
-    },
-  },
+  // {
+  //   accessorKey: 'exceptions',
+  //   header: ({ column }) => {
+  //     return (
+  //       <div
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //         className="px-2 flex hover:bg-transparent w-full"
+  //       >
+  //         Exceptions
+  //         {column.getIsSorted() === 'asc' ? (
+  //           <ArrowUp className="ml-2 h-4 w-4" />
+  //         ) : column.getIsSorted() === 'desc' ? (
+  //           <ArrowDown className="ml-2 h-4 w-4" />
+  //         ) : (
+  //           <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
+  //         )}
+  //       </div>
+  //     );
+  //   },
+  //   cell: ({ row }) => {
+  //     const value = row.getValue('exceptions') as number;
+  //     return (
+  //       <div className="pl-10">
+  //         <span className="font-semibold text-destructive">{String(value).padStart(3, '0')}</span>
+  //       </div>
+  //     );
+  //   },
+  // },
   {
     accessorKey: 'createdOn',
     header: ({ column }) => {

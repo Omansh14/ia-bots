@@ -83,13 +83,13 @@ export const columns: ColumnDef<Client>[] = [
       return <div>{formattedDate}</div>;
     },
   },
-  {
-    accessorKey: 'audit_procedures',
-    header: 'AUDIT PROCEDURES',
-    cell: ({ row }) => (
-      <div className="flex px-10">{row.getValue('audit_procedures')}</div>
-    ),
-  },
+  // {
+  //   accessorKey: 'audit_procedures',
+  //   header: 'AUDIT PROCEDURES',
+  //   cell: ({ row }) => (
+  //     <div className="flex px-10">{row.getValue('audit_procedures')}</div>
+  //   ),
+  // },
   {
     accessorKey: 'lastrun',
     header: 'LAST RUN',

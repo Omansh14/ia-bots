@@ -170,7 +170,7 @@ const Step1 = () => {
     setLocationFilter([]);
     setPeriodFilter([]);
     setFYearFilter([]);
-    setIndustryFilter([]);
+    // setIndustryFilter([]);
     setCategoryFilterValue([]);
 
     try {
@@ -202,15 +202,15 @@ const Step1 = () => {
   );
   const periodOptions = ['Annually', 'Semi-Annually', 'Q1', 'Q2', 'Q3', 'Q4'];
   const fYearOptions = ['2024-25', '2023-24', '2022-23'];
-  const industryOptions = [
-    'Financial Services',
-    'Healthcare',
-    'Manufacturing',
-    'Retail',
-    'Technology',
-    'Energy',
-    'Education',
-  ];
+  // const industryOptions = [
+  //   'Financial Services',
+  //   'Healthcare',
+  //   'Manufacturing',
+  //   'Retail',
+  //   'Technology',
+  //   'Energy',
+  //   'Education',
+  // ];
 
   const initialCompanies = [
     'Acme Corp',
@@ -231,7 +231,7 @@ const Step1 = () => {
   const [locationFilter, setLocationFilter] = useState<OptionType[]>([]);
   const [periodFilter, setPeriodFilter] = useState<OptionType[]>([]);
   const [fYearFilter, setFYearFilter] = useState<OptionType[]>([]);
-  const [industryFilter, setIndustryFilter] = useState<OptionType[]>([]);
+  // const [industryFilter, setIndustryFilter] = useState<OptionType[]>([]);
   const [categoryFilterValue, setCategoryFilterValue] = useState<OptionType[]>([]);
 
   // Load saved state from sessionStorage
@@ -253,9 +253,9 @@ const Step1 = () => {
       if (Array.isArray(data.selected_financial_year)) {
         setFYearFilter(data.selected_financial_year.map((y: string) => ({ value: y, label: y })));
       }
-      if (Array.isArray(data.selected_industry)) {
-        setIndustryFilter(data.selected_industry.map((i: string) => ({ value: i, label: i })));
-      }
+      // if (Array.isArray(data.selected_industry)) {
+      //   setIndustryFilter(data.selected_industry.map((i: string) => ({ value: i, label: i })));
+      // }
       if (Array.isArray(data.company_list) && data.company_list.length > 0) {
         setCompanyList((prev) => Array.from(new Set([...prev, ...data.company_list])));
       }
@@ -295,7 +295,7 @@ const Step1 = () => {
         selected_location: locationFilter.map((opt) => opt.value),
         selected_period: periodFilter.map((opt) => opt.value),
         selected_financial_year: fYearFilter.map((opt) => opt.value),
-        selected_industry: industryFilter.map((opt) => opt.value),
+        // selected_industry: industryFilter.map((opt) => opt.value),
         selected_bots: selectedBotsObjects,
         company_list: companyList,
       };
@@ -309,7 +309,7 @@ const Step1 = () => {
     locationFilter,
     periodFilter,
     fYearFilter,
-    industryFilter,
+    // industryFilter,
     rowSelection,
     companyList,
     table,
@@ -324,12 +324,12 @@ const Step1 = () => {
   const fYearOptions_rs: OptionType[] = [
     ...new Set([...(bots as any).map((bot: any) => bot.fYear).filter(Boolean), ...fYearOptions]),
   ].map((year: any) => ({ value: year, label: year }));
-  const industryOptions_rs: OptionType[] = [
-    ...new Set([
-      ...(bots as any).map((bot: any) => bot.industry).filter(Boolean),
-      ...industryOptions,
-    ]),
-  ].map((industry: any) => ({ value: industry, label: industry }));
+  // const industryOptions_rs: OptionType[] = [
+  //   ...new Set([
+  //     ...(bots as any).map((bot: any) => bot.industry).filter(Boolean),
+  //     ...industryOptions,
+  //   ]),
+  // ].map((industry: any) => ({ value: industry, label: industry }));
   const categoryOptions_rs: OptionType[] = [
     { value: 'P2P', label: 'P2P' },
     { value: 'H2R', label: 'H2R' },
@@ -447,7 +447,7 @@ const Step1 = () => {
               classNamePrefix="react-select"
             />
           </div>
-          <div className="space-y-2 w-full">
+          {/* <div className="space-y-2 w-full">
             <Label htmlFor="industry">Industry</Label>
             <ReactSelect
               isMulti
@@ -459,7 +459,7 @@ const Step1 = () => {
               className="react-select-container"
               classNamePrefix="react-select"
             />
-          </div>
+          </div> */}
         </div>
       </div>
 

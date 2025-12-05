@@ -1,13 +1,8 @@
 import { useState } from 'react';
 import ClientTable from '@/components/tables/client-table/client-table';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Plus, Archive } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CreateClientForm, type ClientFormData } from '@/components/forms/CreateClientForm';
 
 const Client = () => {
@@ -28,26 +23,34 @@ const Client = () => {
             Manage your client relationships and track performance
           </p>
         </div>
-        <Button
-          variant="default"
-          className="hover:cursor-pointer"
-          onClick={() => setIsDialogOpen(true)}
-        >
-          <Plus className="w-10 h-10 text-white" />
-          Create Client
-        </Button>
+        <div className="flex gap-3">
+          {/* Archived Client */}
+          <Button
+            variant="default"
+            className="hover:cursor-pointer"
+            // onClick={() => setIsDialogOpen(true)}
+          >
+            <Archive className="w-10 h-10 text-white" />
+            Archive Clients
+          </Button>
+          <Button
+            variant="default"
+            className="hover:cursor-pointer"
+            onClick={() => setIsDialogOpen(true)}
+          >
+            <Plus className="w-10 h-10 text-white" />
+            Create Client
+          </Button>
+        </div>
       </div>
 
       {/* Create Client Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className='font-bold'>Create Client</DialogTitle>
+            <DialogTitle className="font-bold">Create Client</DialogTitle>
           </DialogHeader>
-          <CreateClientForm
-            onClose={() => setIsDialogOpen(false)}
-            onSubmit={handleCreateClient}
-          />
+          <CreateClientForm onClose={() => setIsDialogOpen(false)} onSubmit={handleCreateClient} />
         </DialogContent>
       </Dialog>
 

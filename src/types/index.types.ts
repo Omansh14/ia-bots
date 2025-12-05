@@ -56,5 +56,5 @@ export interface AuditData {
   exceptions: number;
   runtime: string;
   createdOn: Date;
-  status: "Active" | "Draft" | "Inactive";
+  status: "Completed" | "Draft" | "Failed" | "In Progress";
 }

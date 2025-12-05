@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '../ui/badge';
+import moment from 'moment';
 
 interface CreateClientFormProps {
   onClose: () => void;
@@ -213,10 +214,15 @@ export const CreateClientForm = ({ onClose, onSubmit, type }: CreateClientFormPr
         </Select>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <Label htmlFor="set-parameters" className="text-sm font-medium">
-          {type === 'edit' ? 'Edit': 'Set'} Parameters
+          {type === 'edit' ? 'Edit' : 'Set'} Parameters
         </Label>
+        {type === 'edit' && (
+          <p className="absolute right-0 top-0 text-xs text-muted-foreground">
+            {moment().format('MMMM Do YYYY, h:mm:ss a')}
+          </p>
+        )}
         <Select value={formData.paramters} onValueChange={handleSelectChange}>
           <SelectTrigger id="set-parameters" className="w-full">
             <SelectValue placeholder="Select paramters" />

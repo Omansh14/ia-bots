@@ -1,27 +1,21 @@
 import { useState } from 'react';
 import { AuditSidebar } from '@/components/sidebar/AuditSideBar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { SummaryTab } from '@/components/tabs/outputTabs/SummaryTab';
 import { OutputTab } from '@/components/tabs/outputTabs/OutputTab';
-import { ReportTab } from '@/components/tabs/outputTabs/ReportTab';
+// import { ReportTab } from '@/components/tabs/outputTabs/ReportTab';
 import { Card } from '@/components/ui/card';
+import { Download } from 'lucide-react';
 
 const Output = () => {
   const [selectedItem, setSelectedItem] = useState('Summary');
-  const [activeTab, setActiveTab] = useState('output');
 
   // Check if selected item is a summary
   const isSummary = selectedItem.toLowerCase().includes('summary');
 
   const handleItemSelect = (item: string) => {
     setSelectedItem(item);
-    // Reset to first available tab when switching items
-    if (item.toLowerCase().includes('summary')) {
-      setActiveTab('summary');
-    } else {
-      setActiveTab('output');
-    }
   };
 
   return (
@@ -38,6 +32,13 @@ const Output = () => {
                   </h1>
                 </div>
                 <div className="flex gap-3">
+                  <Button
+                    size="lg"
+                    variant='default'
+                  >
+                    <Download className="mr-2 h-4 w-4 text-white" />
+                    Download Report
+                  </Button>
                   <Button
                     size="lg"
                     className="text-primary bg-primary/10 hover:bg-primary/20 hover:cursor-pointer"
@@ -58,20 +59,7 @@ const Output = () => {
               <SummaryTab />
             ) : (
               // Show tabs for Output and Report when non-summary items are selected
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="output">Output</TabsTrigger>
-                  <TabsTrigger value="report">Report</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="output">
-                  <OutputTab />
-                </TabsContent>
-
-                <TabsContent value="report">
-                  <ReportTab />
-                </TabsContent>
-              </Tabs>
+              <OutputTab />
             )}
           </div>
         </main>

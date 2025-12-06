@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { CreateClientForm } from '@/components/forms/CreateClientForm';
 import { type ClientFormData } from '@/components/forms/CreateClientForm';
 import ReactSelect from 'react-select';
+import { customStyles } from '@/lib/utils';
 
 // Option type for react-select
 interface OptionType {
@@ -52,65 +53,6 @@ const ClientInfo = () => {
     { value: '2025', label: 'FY 2025' },
   ];
 
-  // Custom styles for react-select to match design system
-  const customStyles = {
-    control: (provided: any, state: any) => ({
-      ...provided,
-      minHeight: '40px',
-      borderRadius: '0.5rem',
-      boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
-      '&:hover': {
-        borderColor: 'hsl(var(--border))',
-      },
-    }),
-    menu: (provided: any) => ({
-      ...provided,
-      borderRadius: '0.5rem',
-      zIndex: 50,
-    }),
-    menuList: (provided: any) => ({
-      ...provided,
-      padding: '0.25rem',
-    }),
-    option: (provided: any, state: any) => ({
-      ...provided,
-      borderRadius: '0.375rem',
-      backgroundColor: state.isSelected
-        ? 'hsl(var(--primary))'
-        : state.isFocused
-        ? 'hsl(var(--accent))'
-        : 'transparent',
-      color: state.isSelected ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
-      '&:active': {
-        backgroundColor: 'hsl(var(--primary))',
-      },
-    }),
-    multiValue: (provided: any) => ({
-      ...provided,
-      backgroundColor: 'lightblue',
-      border: '1px solid blue',
-      borderRadius: '0.25rem',
-    }),
-    multiValueLabel: (provided: any) => ({
-      ...provided,
-      color: 'blue',
-      fontSize: '0.875rem',
-    }),
-    multiValueRemove: (provided: any) => ({
-      ...provided,
-      color: 'red',
-      borderRadius: '0 0.25rem 0.25rem 0',
-      '&:hover': {
-        backgroundColor: 'hsl(var(--destructive))',
-        color: 'hsl(var(--destructive-foreground))',
-      },
-    }),
-    placeholder: (provided: any) => ({
-      ...provided,
-      color: 'hsl(var(--muted-foreground))',
-      fontSize: '0.875rem',
-    }),
-  };
 
   return (
     <div className="min-h-screen bg-background">

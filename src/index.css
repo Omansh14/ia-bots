@@ -142,3 +142,63 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .react-flow__node {
+    @apply !bg-transparent;
+  }
+
+  .react-flow__handle {
+    @apply !w-2 !h-2 !border-2 !border-solid transition-all duration-200;
+    background: #d1d5db !important;
+    border-color: hsl(var(--node-bg)) !important;
+  }
+
+  .react-flow__handle:hover {
+    background: hsl(var(--handle-hover)) !important;
+    transform: scale(1.3);
+  }
+
+  .react-flow__edge-path {
+    stroke: var(--foreground) !important;
+    opacity: 0.8;
+    stroke-width: 2;
+  }
+
+  .react-flow__connection-line {
+    stroke: var(--foreground) !important;
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+  }
+
+  .react-flow__background {
+    background-color: hsl(var(--background)) !important;
+  }
+
+  .sheet-node {
+    @apply rounded-xl overflow-hidden shadow-xl;
+    background: rgb(253, 251, 251);
+    border: 1px solid hsl(var(--border));
+    min-width: 220px;
+    z-index: 10;
+  }
+
+  .sheet-node-header {
+    @apply p-3 font-semibold text-sm tracking-wide uppercase;
+    background: #dae6fa;
+    color: white;
+  }
+
+  .sheet-node-row {
+    @apply relative px-4 py-2.5 text-sm border-b transition-colors duration-150;
+    border-color: --muted-foreground;
+  }
+
+  .sheet-node-row:last-child {
+    @apply border-b-0;
+  }
+
+  .sheet-node-row:hover {
+    background: #e6e6e6;
+  }
+}

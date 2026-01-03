@@ -65,7 +65,7 @@ const UploadData = () => {
     // simulate validation time (2s), blur applied via isValidating
     setTimeout(() => {
       setIsValidating(false);
-      navigate('../procedure-review');
+      navigate('../data-mapping');
       // navigate('../organise-upload');
     }, 2000);
   };

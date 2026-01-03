@@ -6,7 +6,7 @@ import {
   applyEdgeChanges,
   Background,
   Controls,
-  MiniMap,
+  // MiniMap,
   type Connection,
   type Edge,
   type Node,
@@ -162,11 +162,11 @@ const FlowCanvas = () => {
           color="hsl(220 15% 20%)"
         />
         <Controls className="!bg-card !border-border !rounded-lg !shadow-xl" />
-        <MiniMap
+        {/* <MiniMap
           className="!bg-card !border-border !rounded-lg !shadow-md"
           nodeColor="#dae6fa"
           maskColor="oklch(0.556 0 0)"
-        />
+        /> */}
       </ReactFlow>
 
       <ConnectionModal

@@ -12,7 +12,7 @@ const CanvasLayout = () => {
   };
   return (
     <div className="flex h-screen w-full relative">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 z-10">
         <Button
           variant="outline"
           size="lg"
@@ -25,7 +25,6 @@ const CanvasLayout = () => {
           Save & Next
         </Button>
       </div>
-
       <Button
         className="absolute top-16 right-4 z-10 bg-white hover:cursor-pointer"
         variant="outline"

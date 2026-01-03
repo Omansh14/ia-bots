@@ -1,10 +1,14 @@
 import { cn } from '@/lib/utils';
 import type { MappingItem as MappingItemType } from '@/types/canvas.types';
-import { Sparkle } from 'lucide-react';
+import { Sparkle, ArrowRight } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface MappingItemProps {
   item: MappingItemType;
-  onDrop: (itemId: string, columnData: { nodeId: string; nodeLabel: string; columnId: string; columnName: string }) => void;
+  onDrop: (
+    itemId: string,
+    columnData: { nodeId: string; nodeLabel: string; columnId: string; columnName: string },
+  ) => void;
 }
 
 const MappingItem = ({ item, onDrop }: MappingItemProps) => {
@@ -22,7 +26,7 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.currentTarget.classList.remove('ring-2', 'ring-primary');
-    
+
     const columnData = e.dataTransfer.getData('application/column');
     if (columnData) {
       try {
@@ -47,7 +51,7 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
 
     // AI mapped = based on confidence score
     const confidence = item.confidenceScore || 0;
-    
+
     if (confidence > 80) {
       return 'bg-green-50 border-green-500/70 text-green-800';
     } else if (confidence >= 50) {
@@ -58,39 +62,42 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
   };
 
   return (
-    <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      className={cn(
-        'px-4 py-3 rounded-lg border transition-all cursor-default relative',
-        getColorClasses()
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <span className="font-medium mt-2">{item.name}</span>
-        {
-          isMapped && item.mappingType === 'ai' ? (
-            <span
-              className="absolute left-0 top-0 text-xs px-2 py-0.5 rounded-tl-md rounded-br-md bg-purple-500 text-white"
-            >
-              <Sparkle className="inline-block size-3 mr-1 text-yellow-200" />
-              AI  
-            </span>
-          ) : null
-        }
-        {isMapped ? (
-          <div className="flex flex-col items-end gap-1 mt-2">
-            <span className="text-sm">
-              — {item.mappedColumn?.columnName}
-            </span>
-
+    <>
+      <Tooltip>
+        <TooltipTrigger className='w-full flex flex-col'>
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={cn(
+              'px-4 py-3 rounded-lg border transition-all cursor-default relative w-full',
+              getColorClasses(),
+            )}
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-medium mt-2">{item.name}</span>
+              {isMapped && item.mappingType === 'ai' ? (
+                <span className="absolute left-0 top-0 text-xs px-2 py-0.5 rounded-tl-md rounded-br-md bg-purple-500 text-white">
+                  <Sparkle className="inline-block size-3 mr-1 text-yellow-200" />
+                </span>
+              ) : null}
+              {isMapped ? (
+                <div className="flex flex-col items-end gap-1 mt-2">
+                  <span className="text-sm"><ArrowRight className="inline-block size-3 mr-1" /> {item.mappedColumn?.columnName}</span>
+                </div>
+              ) : (
+                <span className="text-sm opacity-80">—</span>
+              )}
+            </div>
           </div>
-        ) : (
-          <span className="text-sm opacity-80">—</span>
+        </TooltipTrigger>
+        {isMapped && item.mappingType === 'ai' && (
+          <TooltipContent>
+            <p>Confidence Score: {item.confidenceScore}%</p>
+          </TooltipContent>
         )}
-      </div>
-    </div>
+      </Tooltip>
+    </>
   );
 };
 

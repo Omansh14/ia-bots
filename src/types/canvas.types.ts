@@ -12,6 +12,8 @@ export interface SheetNodeData extends Record<string, unknown> {
 export interface MappingItem {
   id: string;
   name: string;
+  mappingType?: 'user' | 'ai';
+  confidenceScore?: number; // 0-100, only for AI mappings
   mappedColumn?: {
     nodeId: string;
     nodeLabel: string;

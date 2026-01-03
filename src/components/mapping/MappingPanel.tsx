@@ -6,6 +6,7 @@ const initialItems: MappingItemType[] = [
   {
     id: 'field-id',
     name: 'id',
+    mappingType: 'user',
     mappedColumn: {
       nodeId: 'users',
       nodeLabel: 'Users',
@@ -16,11 +17,37 @@ const initialItems: MappingItemType[] = [
   {
     id: 'field-po-num',
     name: 'po_num',
+    mappingType: 'ai',
+    confidenceScore: 85,
     mappedColumn: {
       nodeId: 'posts',
       nodeLabel: 'Posts',
       columnId: 'posts-id',
       columnName: 'PO Number',
+    },
+  },
+  {
+    id: 'field-vendor-name',
+    name: 'vendor_name',
+    mappingType: 'ai',
+    confidenceScore: 65,
+    mappedColumn: {
+      nodeId: 'vendors',
+      nodeLabel: 'Vendors',
+      columnId: 'vendors-name',
+      columnName: 'Vendor Name',
+    },
+  },
+  {
+    id: 'field-amount',
+    name: 'amount',
+    mappingType: 'ai',
+    confidenceScore: 35,
+    mappedColumn: {
+      nodeId: 'transactions',
+      nodeLabel: 'Transactions',
+      columnId: 'transactions-amount',
+      columnName: 'Transaction Amount',
     },
   },
   {
@@ -30,6 +57,10 @@ const initialItems: MappingItemType[] = [
   {
     id: 'field-last-seen',
     name: 'last_seen',
+  },
+  {
+    id: 'field-status',
+    name: 'status',
   },
 ];
 
@@ -41,7 +72,7 @@ const MappingPanel = () => {
     columnData: { nodeId: string; nodeLabel: string; columnId: string; columnName: string },
   ) => {
     setItems((prev) =>
-      prev.map((item) => (item.id === itemId ? { ...item, mappedColumn: columnData } : item)),
+      prev.map((item) => (item.id === itemId ? { ...item, mappedColumn: columnData, mappingType: 'user' } : item)),
     );
   };
 

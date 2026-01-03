@@ -261,14 +261,6 @@ const ProcedureReview = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="lg"
-              className="hover:cursor-pointer"
-              onClick={() => navigate('../../data-filtering')}
-            >
-              Edit Parameters
-            </Button>
             <Button size="lg" className="hover:cursor-pointer" onClick={handleRun}>
               Run
             </Button>

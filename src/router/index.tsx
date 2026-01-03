@@ -17,7 +17,7 @@ const ProcedureReview = lazy(() => import('../pages/dashboard/procedure-review')
 const ClientInfoPage = lazy(() => import('../pages/dashboard/client/ClientInfo'));
 const OutputPage = lazy(() => import('../pages/dashboard/Output'));
 const CreateAuditProcedure = lazy(() => import('../pages/dashboard/CreateAuditProcedure'));
-
+const DataMappingPage = lazy(() => import('../pages/dashboard/client/add-client/DataMapping'));
 const Router = () => {
   return (
     <Routes>
@@ -32,6 +32,7 @@ const Router = () => {
             <Route index element={<CreateClientStep1 />} />
             <Route path="upload-data" element={<CreateClientStep2 />} />
             <Route path="organise-upload" element={<CreateClientStep3 />} />
+            <Route path="data-mapping" element={<DataMappingPage />} />
             <Route path="procedure-review" element={<ProcedureReview />} />
           </Route>
           <Route path=":id">

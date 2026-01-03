@@ -65,7 +65,7 @@ const ConnectionModal = ({
               Source: <span className="text-primary">{sourceNode.label}</span>
             </Label>
             <Select value={sourceColumn} onValueChange={setSourceColumn}>
-              <SelectTrigger className="bg-gray-100 border-border">
+              <SelectTrigger className="bg-gray-100 border-border w-full">
                 <SelectValue placeholder="Select column" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border z-50">
@@ -90,7 +90,7 @@ const ConnectionModal = ({
               Target: <span className="text-primary">{targetNode.label}</span>
             </Label>
             <Select value={targetColumn} onValueChange={setTargetColumn}>
-              <SelectTrigger className="bg-gray-100 border-border">
+              <SelectTrigger className="bg-gray-100 border-border w-full">
                 <SelectValue placeholder="Select column" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border z-50">
@@ -111,7 +111,7 @@ const ConnectionModal = ({
             Cancel
           </Button>
           <Button onClick={handleConfirm}>
-            Confirm Connection
+            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>

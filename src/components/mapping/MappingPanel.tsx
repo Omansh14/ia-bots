@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MappingItem from './MappingItem';
 import type { MappingItem as MappingItemType } from '@/types/canvas.types';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 const initialItems: MappingItemType[] = [
   {
@@ -20,9 +21,9 @@ const initialItems: MappingItemType[] = [
     mappingType: 'ai',
     confidenceScore: 85,
     mappedColumn: {
-      nodeId: 'posts',
-      nodeLabel: 'Posts',
-      columnId: 'posts-id',
+      nodeId: 'users',
+      nodeLabel: 'Users',
+      columnId: 'users-po_num',
       columnName: 'PO Number',
     },
   },
@@ -32,9 +33,9 @@ const initialItems: MappingItemType[] = [
     mappingType: 'ai',
     confidenceScore: 65,
     mappedColumn: {
-      nodeId: 'vendors',
-      nodeLabel: 'Vendors',
-      columnId: 'vendors-name',
+      nodeId: 'comments',
+      nodeLabel: 'Comments',
+      columnId: 'comments-vendor_name',
       columnName: 'Vendor Name',
     },
   },
@@ -44,15 +45,15 @@ const initialItems: MappingItemType[] = [
     mappingType: 'ai',
     confidenceScore: 35,
     mappedColumn: {
-      nodeId: 'transactions',
-      nodeLabel: 'Transactions',
-      columnId: 'transactions-amount',
+      nodeId: 'posts',
+      nodeLabel: 'Posts',
+      columnId: 'posts-amount',
       columnName: 'Transaction Amount',
     },
   },
   {
-    id: 'field-audit',
-    name: 'audit_procedure',
+    id: 'field-pan-number',
+    name: 'pan_number',
   },
   {
     id: 'field-last-seen',
@@ -82,30 +83,47 @@ const MappingPanel = () => {
   return (
     <div className="h-full bg-card border-r border-border p-4 overflow-y-auto">
       <h2 className="text-lg font-semibold text-foreground mb-4">Field Mappings</h2>
-      {unmappedItems.length > 0 && (
-        <div>
-          <h3 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-            Unmapped
-          </h3>
-          <div className="space-y-2">
-            {unmappedItems.map((item) => (
-              <MappingItem key={item.id} item={item} onDrop={handleColumnDrop} />
-            ))}
-          </div>
-        </div>
-      )}
-      {mappedItems.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-sm font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-            Mapped
-          </h3>
-          <div className="space-y-2">
-            {mappedItems.map((item) => (
-              <MappingItem key={item.id} item={item} onDrop={handleColumnDrop} />
-            ))}
-          </div>
-        </div>
-      )}
+      <Accordion type="multiple" defaultValue={["mapped", "unmapped"]} className="w-full">
+        <AccordionItem value="unmapped" className="border-none">
+          <AccordionTrigger className="px-0 py-2">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-sm hover:cursor-pointer font-medium text-muted-foreground uppercase">Unmapped</span>
+              <span className="text-sm text-muted-foreground">{unmappedItems.length}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-0 pt-2 pb-0">
+            {unmappedItems.length > 0 ? (
+              <div className="space-y-2">
+                {unmappedItems.map((item) => (
+                  <MappingItem key={item.id} item={item} onDrop={handleColumnDrop} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">No unmapped items</div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="mapped" className="border-none mt-4">
+          <AccordionTrigger className="px-0 py-2">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-sm font-medium text-muted-foreground uppercase  hover:cursor-pointer">Mapped</span>
+              <span className="text-sm text-muted-foreground">{mappedItems.length}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-0 pt-2 pb-0">
+            {mappedItems.length > 0 ? (
+              <div className="space-y-2">
+                {mappedItems.map((item) => (
+                  <MappingItem key={item.id} item={item} onDrop={handleColumnDrop} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">No mapped items</div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

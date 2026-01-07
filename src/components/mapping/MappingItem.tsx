@@ -69,6 +69,18 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onMouseEnter={() => {
+              if (isMapped && item.mappedColumn) {
+                document.dispatchEvent(
+                  new CustomEvent('mapping-hover', { detail: { columnId: item.mappedColumn.columnId } }),
+                );
+              }
+            }}
+            onMouseLeave={() => {
+              if (isMapped) {
+                document.dispatchEvent(new CustomEvent('mapping-hover', { detail: { columnId: null } }));
+              }
+            }}
             className={cn(
               'px-4 py-3 rounded-lg border transition-all cursor-default relative w-full',
               getColorClasses(),

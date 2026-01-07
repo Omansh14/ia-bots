@@ -1,12 +1,34 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { SheetNodeData } from '@/types/canvas.types';
 import type { Node } from '@xyflow/react';
 import { GripVertical } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+
+
 
 type SheetNodeType = Node<SheetNodeData, 'sheet'>;
 
 const SheetNode = memo(({ data, id }: NodeProps<SheetNodeType>) => {
+  const [hoveredColumnIds, setHoveredColumnIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const handleHighlight = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      // Accept both { columnIds: [] } (preferred) and legacy { columnId }
+      const ids = Array.isArray(detail?.columnIds)
+        ? detail.columnIds
+        : detail?.columnId
+        ? [detail.columnId]
+        : [];
+      setHoveredColumnIds(ids || []);
+    };
+
+    document.addEventListener('mapping-highlight', handleHighlight as EventListener);
+    return () => document.removeEventListener('mapping-highlight', handleHighlight as EventListener);
+  }, []);
+
   const handleDragStart = (e: React.DragEvent, columnId: string, columnName: string) => {
     e.dataTransfer.setData('application/column', JSON.stringify({
       nodeId: id,
@@ -51,36 +73,42 @@ const SheetNode = memo(({ data, id }: NodeProps<SheetNodeType>) => {
         <span className="text-primary">{data.label}</span>
       </div>
       <div className="flex flex-col">
-        {data.columns.map((column) => (
-          <div 
-            key={column.id} 
-            className="sheet-node-row group cursor-grab active:cursor-grabbing"
-            draggable
-            onDragStart={(e) => handleDragStart(e, column.id, column.name)}
-          >
-            <Handle
-              type="target"
-              position={Position.Left}
-              id={`${column.id}-target`}
-              style={{ top: '50%', transform: 'translateY(-50%)' }}
-            />
-            <div className="flex items-center gap-2">
-              <GripVertical className="w-3 h-3 text-muted-foreground opacity-50 group-hover:opacity-100 transition-opacity" />
-              <div className="flex items-center justify-between gap-4 flex-1">
-                <span className="font-mono text-foreground">{column.name}</span>
-                <span className="text-muted-foreground text-xs font-mono">
-                  {column.type}
-                </span>
+        {data.columns.map((column) => {
+          const isHighlighted = hoveredColumnIds.includes(column.id);
+          return (
+            <div 
+              key={column.id} 
+              className={cn(
+                "sheet-node-row group cursor-grab active:cursor-grabbing",
+                isHighlighted && 'bg-blue-600'
+              )}
+              draggable
+              onDragStart={(e) => handleDragStart(e, column.id, column.name)}
+            >
+              <Handle
+                type="target"
+                position={Position.Left}
+                id={`${column.id}-target`}
+                style={{ top: '50%', transform: 'translateY(-50%)' }}
+              />
+              <div className="flex items-center gap-2">
+                <GripVertical className={cn("w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity", isHighlighted ? 'text-white' : 'text-muted-foreground')} />
+                <div className="flex items-center justify-between gap-4 flex-1">
+                  <span className={cn("font-mono", isHighlighted ? 'text-white' : 'text-foreground')}>{column.name}</span>
+                  <span className={cn("text-xs font-mono", isHighlighted ? 'text-white' : 'text-muted-foreground')}>
+                    {column.type}
+                  </span>
+                </div>
               </div>
+              <Handle
+                type="source"
+                position={Position.Right}
+                id={`${column.id}-source`}
+                style={{ top: '50%', transform: 'translateY(-50%)' }}
+              />
             </div>
-            <Handle
-              type="source"
-              position={Position.Right}
-              id={`${column.id}-source`}
-              style={{ top: '50%', transform: 'translateY(-50%)' }}
-            />
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

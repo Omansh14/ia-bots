@@ -23,6 +23,9 @@ interface ConnectionModalProps {
   onConfirm: (sourceColumnId: string, targetColumnId: string) => void;
   sourceNode: { label: string; columns: ColumnItem[] } | null;
   targetNode: { label: string; columns: ColumnItem[] } | null;
+  // Optional initial selections when opening from a direct handle connect
+  initialSourceColumnId?: string | null;
+  initialTargetColumnId?: string | null;
 }
 
 const ConnectionModal = ({
@@ -31,16 +34,26 @@ const ConnectionModal = ({
   onConfirm,
   sourceNode,
   targetNode,
+  initialSourceColumnId = null,
+  initialTargetColumnId = null,
 }: ConnectionModalProps) => {
   const [sourceColumn, setSourceColumn] = useState<string>('');
   const [targetColumn, setTargetColumn] = useState<string>('');
 
   useEffect(() => {
     if (isOpen && sourceNode?.columns.length && targetNode?.columns.length) {
-      setSourceColumn(sourceNode.columns[0].id);
-      setTargetColumn(targetNode.columns[0].id);
+      // Prefer initial values when provided and valid (ensure they belong to the node)
+      const sourceIsValid = !!initialSourceColumnId && sourceNode.columns.some((c) => c.id === initialSourceColumnId);
+      const targetIsValid = !!initialTargetColumnId && targetNode.columns.some((c) => c.id === initialTargetColumnId);
+
+      setSourceColumn(sourceIsValid ? (initialSourceColumnId as string) : sourceNode.columns[0].id);
+      setTargetColumn(targetIsValid ? (initialTargetColumnId as string) : targetNode.columns[0].id);
+    } else {
+      // Reset selections when modal is closed or nodes missing
+      setSourceColumn('');
+      setTargetColumn('');
     }
-  }, [isOpen, sourceNode, targetNode]);
+  }, [isOpen, sourceNode, targetNode, initialSourceColumnId, initialTargetColumnId]);
 
   const handleConfirm = () => {
     if (sourceColumn && targetColumn) {

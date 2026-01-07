@@ -160,13 +160,13 @@
   }
 
   .react-flow__edge-path {
-    stroke: var(--foreground) !important;
+    stroke: var(--foreground);
     opacity: 0.8;
     stroke-width: 2;
   }
 
   .react-flow__connection-line {
-    stroke: var(--foreground) !important;
+    stroke: var(--foreground);
     stroke-width: 2;
     stroke-dasharray: 5 5;
   }

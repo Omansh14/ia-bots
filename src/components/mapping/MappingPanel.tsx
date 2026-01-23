@@ -6,49 +6,49 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 const initialItems: MappingItemType[] = [
   {
     id: 'field-id',
-    name: 'id',
+    name: 'User ID',
     mappingType: 'user',
     mappedColumn: {
       nodeId: 'users',
       nodeLabel: 'Users',
       columnId: 'users-id',
-      columnName: 'User ID',
+      columnName: 'id',
     },
   },
   {
     id: 'field-po-num',
-    name: 'po_num',
+    name: 'PO Number',
     mappingType: 'ai',
     confidenceScore: 85,
     mappedColumn: {
       nodeId: 'users',
       nodeLabel: 'Users',
       columnId: 'users-po_num',
-      columnName: 'PO Number',
+      columnName: 'po_num',
     },
   },
   {
     id: 'field-vendor-name',
-    name: 'vendor_name',
+    name: 'Vendor Name',
     mappingType: 'ai',
     confidenceScore: 65,
     mappedColumn: {
       nodeId: 'comments',
       nodeLabel: 'Comments',
       columnId: 'comments-vendor_name',
-      columnName: 'Vendor Name',
+      columnName: 'vendor_name',
     },
   },
   {
     id: 'field-amount',
-    name: 'amount',
+    name: 'Transaction Amount',
     mappingType: 'ai',
     confidenceScore: 35,
     mappedColumn: {
       nodeId: 'posts',
       nodeLabel: 'Posts',
       columnId: 'posts-amount',
-      columnName: 'Transaction Amount',
+      columnName: 'amount',
     },
   },
   {

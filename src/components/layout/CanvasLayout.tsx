@@ -2,8 +2,11 @@ import MappingPanel from '@/components/mapping/MappingPanel';
 import FlowCanvas from '@/components/canvas/FlowCanvas';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { ArrowDownToLine, ArrowLeft, Expand, Logs } from 'lucide-react';
+import { ArrowLeft, Logs } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
+import { Dialog, DialogTrigger } from '../ui/dialog';
+import DataExtractionModal from '../modals/DataExtractionModal';
 
 const CanvasLayout = () => {
   const navigate = useNavigate();
@@ -24,7 +27,15 @@ const CanvasLayout = () => {
             </p>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="default" size="lg" className="hover:cursor-pointer">
+                Data Extraction
+              </Button>
+            </DialogTrigger>
+            <DataExtractionModal />
+          </Dialog>
           <Button
             variant="outline"
             size="lg"
@@ -39,24 +50,26 @@ const CanvasLayout = () => {
         </div>
       </div>
       <div className="flex h-screen w-full relative">
-        <Button
-          className="absolute top-4 right-28 z-10 bg-white hover:cursor-pointer"
-          variant="outline"
-        >
-          <ArrowDownToLine />
+        <Button className="absolute top-4 right-4 z-10 hover:cursor-pointer" variant="default">
+          Save
         </Button>
-        <Button
-          className="absolute top-4 right-16 z-10 bg-white hover:cursor-pointer"
-          variant="outline"
-        >
-          <Expand />
-        </Button>
-        <Button
-          className="absolute top-4 right-4 z-10 bg-white hover:cursor-pointer"
-          variant="outline"
-        >
-          <Logs />
-        </Button>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              className="absolute top-4 right-22 z-10 bg-white hover:cursor-pointer"
+              variant="outline"
+            >
+              <Logs />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="bg-background">
+            <SheetHeader className="border-b-gray-300 shadow-sm">
+              <SheetTitle>Error Logs</SheetTitle>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+
         <div className="w-72 flex-shrink-0">
           <MappingPanel />
         </div>

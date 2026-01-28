@@ -94,9 +94,7 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
                 </span>
               ) : null}
               {isMapped ? (
-                <div className="flex flex-col items-end gap-1 mt-2">
-                  <span className="text-sm"><ArrowRight className="inline-block size-3 mr-1" /> {item.mappedColumn?.columnName}</span>
-                </div>
+                <span className="text-sm flex items-center mt-2"><ArrowRight className="inline-block size-3 mr-1" /> {item.mappedColumn?.columnName}</span>
               ) : (
                 <span className="text-sm opacity-80">—</span>
               )}

@@ -12,6 +12,7 @@ import {
   type NodeChange,
   type EdgeChange,
   BackgroundVariant,
+  ConnectionMode,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import SheetNode from './SheetNode';
@@ -251,6 +252,7 @@ const FlowCanvas = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.Loose}
         fitView
         proOptions={{ hideAttribution: true }}
         className="bg-background"
@@ -262,11 +264,6 @@ const FlowCanvas = () => {
           color="hsl(220 15% 20%)"
         />
         <Controls className="!bg-card !border-border !rounded-lg !shadow-xl" />
-        {/* <MiniMap
-          className="!bg-card !border-border !rounded-lg !shadow-md"
-          nodeColor="#dae6fa"
-          maskColor="oklch(0.556 0 0)"
-        /> */}
       </ReactFlow>
 
       <ConnectionModal

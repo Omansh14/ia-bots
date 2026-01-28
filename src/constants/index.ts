@@ -1,4 +1,5 @@
 import type { Client, Bot, AuditProcedure, AuditData } from '@/types/index.types';
+import type { UploadedFile } from '@/components/modals/DataExtractionModal';
 
 const Clients: Client[] = [
   {
@@ -419,7 +420,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 187,
     exceptions: 213,
     runtime: '45 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Draft',
   },
   {
@@ -429,7 +430,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 145,
     exceptions: 154,
     runtime: '25 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Completed',
   },
   {
@@ -439,7 +440,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 163,
     exceptions: 189,
     runtime: '40 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'In Progress',
   },
   {
@@ -449,7 +450,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 152,
     exceptions: 172,
     runtime: '35 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Failed',
   },
   {
@@ -459,7 +460,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 198,
     exceptions: 234,
     runtime: '50 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Completed',
   },
   {
@@ -469,7 +470,7 @@ export const auditData: AuditData[] = [
     totalProcedures: 105,
     exceptions: 87,
     runtime: '20 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Draft',
   },
   {
@@ -479,9 +480,92 @@ export const auditData: AuditData[] = [
     totalProcedures: 176,
     exceptions: 195,
     runtime: '42 seconds',
-    createdOn:  new Date('2024-10-01T10:20:30Z'),
+    createdOn: new Date('2024-10-01T10:20:30Z'),
     status: 'Failed',
   },
 ];
 
-export { bots, Clients, audit_Procedures };
+const files: UploadedFile[] = [
+  {
+    id: '1',
+    name: 'audit_data_2024.csv',
+    type: 'csv',
+    isMapped: false,
+    content:
+      'Company,Revenue,Year\nAcme Corp,5000000,2024\nTech Inc,3500000,2024\nGlobal Ltd,7200000,2024',
+  },
+  {
+    id: '2',
+    name: 'financial_report.xlsx',
+    type: 'xlsx',
+    isMapped: true,
+    content:
+      '{"sheets": [{"name": "Summary", "data": [["Total Assets", "$50,000,000"], ["Liabilities", "$15,000,000"], ["Equity", "$35,000,000"]]}]}',
+  },
+  {
+    id: '3',
+    name: 'client_details.csv',
+    type: 'csv',
+    isMapped: true,
+    content:
+      'Client ID,Client Name,Email,Industry\n1,Acme Corporation,contact@acme.com,Technology\n2,Tech Innovations,info@techinnovations.com,Software',
+  },
+  {
+    id: '4',
+    name: 'expense_report_jan.xlsx',
+    type: 'xlsx',
+    isMapped: false,
+    content:
+      '{"sheets": [{"name": "Expenses", "data": [["Date", "Category", "Amount"], ["2024-01-05", "Travel", "1500"], ["2024-01-10", "Supplies", "250"]]}]}',
+  },
+  {
+    id: '5',
+    name: 'employee_data.xls',
+    type: 'xls',
+    isMapped: true,
+    content:
+      '{"sheets": [{"name": "Employees", "data": [["Employee ID", "Name", "Department"], ["E001", "John Smith", "HR"], ["E002", "Sarah Johnson", "Finance"]]}]}',
+  },
+  {
+    id: '6',
+    name: 'inventory_stock.csv',
+    type: 'csv',
+    isMapped: false,
+    content:
+      'SKU,Product,Quantity,Location\n001,Widget A,500,Warehouse A\n002,Widget B,350,Warehouse B\n003,Gadget X,200,Warehouse A',
+  },
+  {
+    id: '7',
+    name: 'sales_metrics_q4.xlsx',
+    type: 'xlsx',
+    isMapped: true,
+    content:
+      '{"sheets": [{"name": "Sales", "data": [["Month", "Total Sales", "Units", "Target"], ["October", "450000", "125", "400000"], ["November", "520000", "145", "450000"]]}]}',
+  },
+  {
+    id: '8',
+    name: 'compliance_data.xls',
+    type: 'xls',
+    isMapped: true,
+    content:
+      '{"sheets": [{"name": "Checklist", "data": [["Item", "Status", "Date"], ["Privacy Policy", "Complete", "2024-01-15"], ["Security Assessment", "Complete", "2024-01-20"]]}]}',
+  },
+  {
+    id: '9',
+    name: 'vendor_analysis.csv',
+    type: 'csv',
+    isMapped: true,
+    content:
+      'Vendor ID,Vendor Name,Contract Value,Renewal Date\nV001,Global Supplies Inc,500000,2024-12-31\nV002,Tech Solutions Ltd,750000,2024-09-15',
+  },
+  {
+    id: '10',
+    name: 'quarterly_report.xlsx',
+    type: 'xlsx',
+    isMapped: false,
+    content:
+      '{"sheets": [{"name": "Q4 Report", "data": [["Metric", "Value", "YoY Growth"], ["Revenue", "12500000", "15%"], ["Expenses", "8000000", "8%"]]}]}',
+  },
+];
+
+export { bots, Clients, audit_Procedures, files };

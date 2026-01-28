@@ -6,8 +6,6 @@ import { GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 
-
-
 type SheetNodeType = Node<SheetNodeData, 'sheet'>;
 
 const SheetNode = memo(({ data, id }: NodeProps<SheetNodeType>) => {
@@ -84,6 +82,7 @@ const SheetNode = memo(({ data, id }: NodeProps<SheetNodeType>) => {
               )}
               draggable
               onDragStart={(e) => handleDragStart(e, column.id, column.name)}
+              
             >
               <Handle
                 type="target"

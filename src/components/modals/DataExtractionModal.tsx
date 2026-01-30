@@ -135,7 +135,7 @@ const DataExtractionModal = () => {
       // Row number column
       html += `<td class="border border-gray-300 px-2 py-1 text-center bg-gray-200 font-semibold w-10">${rowIndex + 1}</td>`;
       // Data cells
-      row.forEach((cell: any, colIndex: number) => {
+      row.forEach((cell: any) => {
         const tag = rowIndex === 0 ? 'th' : 'td';
         html += `<${tag} class="border border-gray-300 px-3 py-2 whitespace-nowrap">${String(cell || '')}</${tag}>`;
       });

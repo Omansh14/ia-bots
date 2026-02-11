@@ -5,7 +5,6 @@ import {
   applyEdgeChanges,
   Background,
   Controls,
-  // MiniMap,
   type Connection,
   type Edge,
   type Node,
@@ -19,7 +18,7 @@ import SheetNode from './SheetNode';
 import ConnectionModal from './ConnectionModal';
 import type { SheetNodeData } from '@/types/canvas.types';
 
-type SheetNodeType = Node<SheetNodeData, 'sheet'>;
+export type SheetNodeType = Node<SheetNodeData, 'sheet'>;
 
 const nodeTypes = {
   sheet: SheetNode,
@@ -40,7 +39,9 @@ const EDGE_COLOR_PALETTE = [
 ];
 
 const pickEdgeColor = (existingEdges: Edge[]) => {
-  const used = new Set(existingEdges.map((e) => (e.style as any)?.stroke || (e.data as any)?.color).filter(Boolean));
+  const used = new Set(
+    existingEdges.map((e) => (e.style as any)?.stroke || (e.data as any)?.color).filter(Boolean),
+  );
   const available = EDGE_COLOR_PALETTE.find((c) => !used.has(c));
   if (available) return available;
   // Fallback: pick by round-robin based on number of edges
@@ -112,27 +113,77 @@ const FlowCanvas = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds) as SheetNodeType[]),
-    []
+    (changes: NodeChange[]) => setNodes((nds) => applyNodeChanges(changes, nds) as SheetNodeType[]),
+    [],
   );
 
   const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
-    []
+    (changes: EdgeChange[]) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [],
   );
+
+  /**
+   * Determines the optimal handle pair based on node positions
+   * Returns handles that create the shortest path
+   */
+  const getOptimalHandles = (
+    sourceNodeId: string,
+    targetNodeId: string,
+    sourceHandle?: string,
+    targetHandle?: string,
+  ): { sourceHandle: string; targetHandle: string } => {
+    const sourceNode = nodes.find((n) => n.id === sourceNodeId);
+    const targetNode = nodes.find((n) => n.id === targetNodeId);
+
+    if (!sourceNode || !targetNode) {
+      // Fallback to provided handles or defaults
+      return {
+        sourceHandle: sourceHandle || 'right',
+        targetHandle: targetHandle || 'left',
+      };
+    }
+
+    // Determine which side to use based on relative positions
+    const sourceIsLeft = sourceNode.position.x < targetNode.position.x;
+
+    if (sourceHandle && targetHandle) {
+      // Handles were specified (from drag/drop) - extract column IDs and sides
+      const sourceColumnId = sourceHandle.replace(/-(left|right)$/, '');
+      const targetColumnId = targetHandle.replace(/-(left|right)$/, '');
+
+      // Choose the shortest path based on node positions
+      if (sourceIsLeft) {
+        // Source is on the left - use right handle of source, left handle of target
+        return {
+          sourceHandle: `${sourceColumnId}-right`,
+          targetHandle: `${targetColumnId}-left`,
+        };
+      } else {
+        // Source is on the right - use left handle of source, right handle of target
+        return {
+          sourceHandle: `${sourceColumnId}-left`,
+          targetHandle: `${targetColumnId}-right`,
+        };
+      }
+    }
+
+    // No handles specified - shouldn't happen, but fallback
+    return {
+      sourceHandle: sourceIsLeft ? 'right' : 'left',
+      targetHandle: sourceIsLeft ? 'left' : 'right',
+    };
+  };
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      // Prevent creating connections within the same node (right -> left)
+      // Prevent creating connections within the same node
       if (connection.source === connection.target) {
         console.warn('Ignoring self-connection within the same node');
         return;
       }
 
-      // Instead of adding an edge directly, open the confirm modal and pre-select columns when possible.
-      const extractCol = (handle?: string) => (handle ? handle.replace(/-(source|target)$/, '') : undefined);
+      const extractCol = (handle?: string) =>
+        handle ? handle.replace(/-(left|right)$/, '') : undefined;
       const sourceColumnId = extractCol(connection.sourceHandle ?? undefined);
       const targetColumnId = extractCol(connection.targetHandle ?? undefined);
 
@@ -142,9 +193,10 @@ const FlowCanvas = () => {
         sourceColumnId: sourceColumnId ?? null,
         targetColumnId: targetColumnId ?? null,
       });
+
       setModalOpen(true);
     },
-    []
+    [nodes],
   );
 
   // Handle column drop events
@@ -153,8 +205,13 @@ const FlowCanvas = () => {
     if (!container) return;
 
     const handleColumnDrop = (e: CustomEvent) => {
-      const { sourceNodeId, targetNodeId } = e.detail;
-      setPendingConnection({ sourceNodeId, targetNodeId });
+      const { sourceNodeId, targetNodeId, sourceColumnId, targetColumnId } = e.detail;
+      setPendingConnection({
+        sourceNodeId,
+        targetNodeId,
+        sourceColumnId,
+        targetColumnId,
+      });
       setModalOpen(true);
     };
 
@@ -164,7 +221,7 @@ const FlowCanvas = () => {
     };
   }, []);
 
-  // Listen for mapping-hover (from the left panel) and compute all directly connected columns via edges.
+  // Listen for mapping-hover and compute all directly connected columns via edges
   useEffect(() => {
     const handleMappingHover = (e: Event) => {
       const detail = (e as CustomEvent).detail;
@@ -180,17 +237,23 @@ const FlowCanvas = () => {
       connected.add(columnId);
 
       edges.forEach((edge) => {
+        // Extract column IDs from handles (remove -left or -right suffix)
+        const sourceColumnId = edge.sourceHandle?.replace(/-(left|right)$/, '');
+        const targetColumnId = edge.targetHandle?.replace(/-(left|right)$/, '');
+
         // If the hovered column is the source, add the target column
-        if (edge.sourceHandle === `${columnId}-source` && edge.targetHandle) {
-          connected.add(edge.targetHandle.replace(/-target$/, ''));
+        if (sourceColumnId === columnId && targetColumnId) {
+          connected.add(targetColumnId);
         }
         // If the hovered column is the target, add the source column
-        if (edge.targetHandle === `${columnId}-target` && edge.sourceHandle) {
-          connected.add(edge.sourceHandle.replace(/-source$/, ''));
+        if (targetColumnId === columnId && sourceColumnId) {
+          connected.add(sourceColumnId);
         }
       });
 
-      document.dispatchEvent(new CustomEvent('mapping-highlight', { detail: { columnIds: Array.from(connected) } }));
+      document.dispatchEvent(
+        new CustomEvent('mapping-highlight', { detail: { columnIds: Array.from(connected) } }),
+      );
     };
 
     document.addEventListener('mapping-hover', handleMappingHover as EventListener);
@@ -200,37 +263,35 @@ const FlowCanvas = () => {
   const handleModalConfirm = (sourceColumnId: string, targetColumnId: string) => {
     if (!pendingConnection) return;
 
-    // Disallow creating a connection within the same node (right -> left)
+    // Disallow creating a connection within the same node
     if (pendingConnection.sourceNodeId === pendingConnection.targetNodeId) {
       console.warn('Cannot create a connection within the same node');
-      // Close modal and clear pending connection
       setModalOpen(false);
       setPendingConnection(null);
       return;
     }
 
+    // Get optimal handles based on node positions
+    const { sourceHandle, targetHandle } = getOptimalHandles(
+      pendingConnection.sourceNodeId,
+      pendingConnection.targetNodeId,
+      `${sourceColumnId}-right`, // temporary, will be optimized
+      `${targetColumnId}-left`, // temporary, will be optimized
+    );
+
     const newEdge: Edge = {
-      id: `e-${sourceColumnId}-${targetColumnId}`,
+      id: `e-${pendingConnection.sourceNodeId}-${sourceColumnId}-${pendingConnection.targetNodeId}-${targetColumnId}`,
       source: pendingConnection.sourceNodeId,
-      sourceHandle: `${sourceColumnId}-source`,
+      sourceHandle,
       target: pendingConnection.targetNodeId,
-      targetHandle: `${targetColumnId}-target`,
+      targetHandle,
       animated: true,
     };
 
-    // Ensure only one connection exists between the two nodes (unordered pair), and assign a distinct color.
     setEdges((eds) => {
-      const filtered = eds.filter((e) => {
-        const samePair =
-          (e.source === pendingConnection.sourceNodeId && e.target === pendingConnection.targetNodeId) ||
-          (e.source === pendingConnection.targetNodeId && e.target === pendingConnection.sourceNodeId);
-        return !samePair;
-      });
-
-      const color = pickEdgeColor(filtered);
+      const color = pickEdgeColor(eds);
       const coloredEdge = { ...newEdge, style: { stroke: color } } as Edge;
-
-      return [...filtered, coloredEdge];
+      return [...eds, coloredEdge];
     });
 
     setPendingConnection(null);
@@ -244,7 +305,7 @@ const FlowCanvas = () => {
     : null;
 
   return (
-    <div ref={containerRef} className="w-full h-screen bg-background">
+    <div ref={containerRef} className="w-full h-screen bg-background relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -253,17 +314,18 @@ const FlowCanvas = () => {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
+        connectionLineComponent={() => null}
         fitView
         proOptions={{ hideAttribution: true }}
         className="bg-background"
+        isValidConnection={(connection) => {
+          return connection.source !== connection.target;
+        }}
       >
-        <Background
-          variant={BackgroundVariant.Dots}
-          gap={20}
-          size={1}
-          color="hsl(220 15% 20%)"
-        />
-        <Controls className="!bg-card !border-border !rounded-lg !shadow-xl" />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="hsl(220 15% 20%)" />
+        <span className="absolute right-20 top-50">
+          <Controls className="!bg-card !border-border !rounded-lg !shadow-xl" />
+        </span>
       </ReactFlow>
 
       <ConnectionModal

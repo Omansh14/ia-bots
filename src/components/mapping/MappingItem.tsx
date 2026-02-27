@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { MappingItem as MappingItemType } from '@/types/canvas.types';
-import { Sparkle, ArrowRight } from 'lucide-react';
+import { Sparkle, ArrowRight, Trash2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 interface MappingItemProps {
@@ -9,10 +10,12 @@ interface MappingItemProps {
     itemId: string,
     columnData: { nodeId: string; nodeLabel: string; columnId: string; columnName: string },
   ) => void;
+  onDelete?: (itemId: string) => void;
 }
 
-const MappingItem = ({ item, onDrop }: MappingItemProps) => {
+const MappingItem = ({ item, onDrop, onDelete }: MappingItemProps) => {
   const isMapped = !!item.mappedColumn;
+  const [hovered, setHovered] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -56,45 +59,65 @@ const MappingItem = ({ item, onDrop }: MappingItemProps) => {
       return 'bg-green-50 border-green-500/70 text-green-800';
     } else if (confidence >= 50) {
       return 'bg-yellow-50 border-yellow-500/70 text-yellow-800';
-    } else {
-      return 'bg-orange-50 border-orange-500/70 text-orange-800';
     }
   };
 
   return (
     <>
       <Tooltip>
-        <TooltipTrigger className='w-full flex flex-col'>
+        <TooltipTrigger className="w-full flex flex-col">
           <div
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onMouseEnter={() => {
+              setHovered(true);
               if (isMapped && item.mappedColumn) {
                 document.dispatchEvent(
-                  new CustomEvent('mapping-hover', { detail: { columnId: item.mappedColumn.columnId } }),
+                  new CustomEvent('mapping-hover', {
+                    detail: { columnId: item.mappedColumn.columnId },
+                  }),
                 );
               }
             }}
             onMouseLeave={() => {
+              setHovered(false);
               if (isMapped) {
-                document.dispatchEvent(new CustomEvent('mapping-hover', { detail: { columnId: null } }));
+                document.dispatchEvent(
+                  new CustomEvent('mapping-hover', { detail: { columnId: null } }),
+                );
               }
             }}
             className={cn(
-              'px-4 py-3 rounded-lg border transition-all cursor-default relative w-full',
+              'px-4 py-2 rounded-lg border transition-all cursor-default relative w-full',
               getColorClasses(),
             )}
           >
+            {hovered && isMapped ? (
+              <p
+                title="Remove mapping"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(item.id);
+                }}
+                className="absolute right-2 top-2 p-1 rounded bg-red-50 hover:bg-red-100 text-red-600 z-10"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <Trash2 className="w-4 h-4" />
+              </p>
+            ) : null}
             <div className="flex items-center justify-between">
               <span className="font-medium mt-2">{item.name}</span>
               {isMapped && item.mappingType === 'ai' ? (
-                <span className="absolute left-0 top-0 text-xs px-2 py-0.5 rounded-tl-md rounded-br-md bg-purple-500 text-white">
+                <span className="absolute left-0 top-0 text-xs px-1 py-0.5 rounded-tl-md rounded-br-md bg-purple-500 text-white">
                   <Sparkle className="inline-block size-3 mr-1 text-yellow-200" />
                 </span>
               ) : null}
               {isMapped ? (
-                <span className="text-sm flex items-center mt-2"><ArrowRight className="inline-block size-3 mr-1" /> {item.mappedColumn?.columnName}</span>
+                <span className="text-sm flex items-center mt-2">
+                  <ArrowRight className="inline-block size-3 mr-1" />{' '}
+                  {item.mappedColumn?.columnName}
+                </span>
               ) : (
                 <span className="text-sm opacity-80">—</span>
               )}

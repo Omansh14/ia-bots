@@ -13,6 +13,7 @@ export interface MappingItem {
   id: string;
   name: string;
   mappingType?: 'user' | 'ai';
+  procedure: string;
   confidenceScore?: number; // 0-100, only for AI mappings
   mappedColumn?: {
     nodeId: string;
